@@ -7,7 +7,10 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -17,7 +20,7 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
     private Nave nave;
     private JFrame janela;
     private Menu menu;
-    public Timer timerGeral, timerTiro, timerAnimacao, timerSpawnInimigo;
+    public Timer timerGeral, timerTiro, timerAnimacao, timerSpawnInimigo,timerCarregarFundo;
 
     private Som somTiro = new Som("/sons/nave/tiro.wav");
 
@@ -44,67 +47,90 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
 
 
     public Jogo(JFrame janela,Menu menu){
-        this.janela = janela;
-        this.menu = menu;
-        setFocusable(true);
-        addKeyListener(this);
-        addMouseListener(this);
-        addMouseMotionListener(this);
-        
-        nave = new Nave(new ImageIcon(getClass().getResource("/nave/nave.png")).getImage(),janela);
-        
+        try{
+            this.janela = janela;
+            this.menu = menu;
+            setFocusable(true);
+            addKeyListener(this);
+            addMouseListener(this);
+            addMouseMotionListener(this);
+            
+            nave = new Nave(new ImageIcon(getClass().getResource("/nave/nave.png")).getImage(),janela);
+            
 
-        for (int i = 1; i <= 10; i++){
-            fundo.add(new ImageIcon(getClass().getResource("/jogo/fundo/(" + i + ").jpg")).getImage());
+            for (int i = 1; i <= 10; i++){
+                fundo.add(new ImageIcon(getClass().getResource("/jogo/fundo/(" + i + ").jpg")).getImage());
+            }
+
+            timerCarregarFundo = new Timer(5,new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e){
+                    try{
+                        if(indiceFundo <= totalFrames){
+                            if(fundo.size() - 1 < 20){
+                                BufferedImage img = ImageIO.read(getClass().getResource("jogo/fundo/(" + indiceFundo + ").jpg"));
+                                fundo.add(img);
+                                indiceFundo ++;
+                            }
+                        }else{
+                            indiceFundo = 1;      
+                        }
+
+                    }catch(Exception Err){
+                        System.out.println("ERRO AO CARREEGAR IMAGEM DO FUNDO! CÓDIGO DE ERRO: " + Err);
+                    }
+                }
+            });
+            
+
+            //Timers==================================
+            timerGeral = new Timer(16,this);
+            timerTiro = new Timer(200,new ActionListener(){
+                @Override
+                public void actionPerformed(ActionEvent e) {
+
+                    if(atirar){
+                        tirosNave.add(new Tiro(nave.x + 70,nave.y,tiroNaveImagem,acertoSprites));
+                        somTiro.tocarSom();
+                    }
+                }
+            });
+
+            timerSpawnInimigo = new Timer(1000,new ActionListener(){
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    inimigos.add(new Inimigo(inimigoImg,explosaoInimigo,fumaca));
+                }
+            });
+            
+
+            timerAnimacao = new Timer(50, new ActionListener(){
+                @Override
+                public void actionPerformed(ActionEvent e){
+                    if(indiceAnimacaoTiro < animacaoTiroNave.size() - 1){
+                        indiceAnimacaoTiro ++;
+                    }else{
+                        indiceAnimacaoTiro = 0;
+                    }
+
+                    if(indiceTurbina < animacaoTurbina.size() - 1){
+                        indiceTurbina ++;
+                    }else{
+                        indiceTurbina = 0;
+                    }
+                }
+            });
+
+            //========================================
+
+
+
+        }catch(Exception Err){
+            System.out.print("ERRO NO CONSTRUTOR DA CLASSE JOGO! CÓDIGO DE ERRO: " + Err);
         }
-
-        //Timers==================================
-        timerGeral = new Timer(16,this);
-        timerTiro = new Timer(200,new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-                if(atirar){
-                    tirosNave.add(new Tiro(nave.x + 70,nave.y,tiroNaveImagem,acertoSprites));
-                    somTiro.tocarSom();
-                }
-            }
-        });
-
-        timerSpawnInimigo = new Timer(1000,new ActionListener(){
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                inimigos.add(new Inimigo(inimigoImg,explosaoInimigo,fumaca));
-            }
-        });
-        
-
-        timerAnimacao = new Timer(50, new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e){
-                if(indiceAnimacaoTiro < animacaoTiroNave.size() - 1){
-                    indiceAnimacaoTiro ++;
-                }else{
-                    indiceAnimacaoTiro = 0;
-                }
-
-                if(indiceTurbina < animacaoTurbina.size() - 1){
-                    indiceTurbina ++;
-                }else{
-                    indiceTurbina = 0;
-                }
-            }
-        });
-
-        
-
-
-        //========================================
-
-
-
-    }
+        }
+    
 
    
    //Desenhar coisas=========================================================
@@ -112,7 +138,8 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
     public void paintComponent(Graphics g){
         super.paintComponent(g);
         if(fundo != null){
-            g.drawImage(fundo.get(2),0,0,getWidth(),getHeight(),null);
+            g.drawImage(fundo.get(1),0,0,getWidth(),getHeight(),null);
+            fundo.remove(0);
         }
 
         
@@ -157,6 +184,7 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
            timerAnimacao.stop();
            timerSpawnInimigo.stop();
            timerTiro.stop();
+           timerCarregarFundo.stop();
            pontos = 0;
 
            inimigos.clear();
@@ -273,13 +301,7 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
         tirosParaRemover.clear();
 
         
-        if(indiceFundo <= totalFrames){
-            fundo.add(new ImageIcon(getClass().getResource("/jogo/fundo/(" + indiceFundo + ").jpg")).getImage());
-            fundo.remove(0);
-            indiceFundo ++;
-        }else{
-            indiceFundo = 1;      
-        }
+        
 
         if(cima){
             nave.y -= nave.vel;

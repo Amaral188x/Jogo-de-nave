@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -11,11 +12,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
 
 public class Menu extends JPanel implements KeyListener,ActionListener{
     private JFrame janela;
     private ArrayList<Image> fundo = new ArrayList<>();
-    public Timer timerGeral;
+    public Timer timerGeral,timerAdicionarFrame;
     private int indiceFundo = 1,totalFrames = 286;
     private Jogo jogo;
     
@@ -31,14 +33,43 @@ public class Menu extends JPanel implements KeyListener,ActionListener{
             fundo.add(new ImageIcon(getClass().getResource("/menu/fundo/(" + i + ").jpg")).getImage());
         }
 
-        timerGeral = new Timer(16,this);
+        timerAdicionarFrame = new Timer(5, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try{
+                    if(indiceFundo <= totalFrames){
+                        if(fundo.size() < 20){
+                            BufferedImage img = ImageIO.read(getClass().getResource("/menu/fundo/(" + indiceFundo + ").jpg"));
+                            fundo.add(img);
+                            indiceFundo ++;
+                        }else{
+                            return;
+                        }
+                    }else{
+                        indiceFundo = 1;      
+                    }      
+                }  
+             catch(Exception Err){
+                System.out.println("ERRO AO CARREGAR FUNDO NO MENU! CÓDIGO DE ERRO: " + Err);
+            }
+        }
+        });
+
+        timerAdicionarFrame.start();
+        
+        
+
+        timerGeral = new Timer(20,this);
         timerGeral.start(); 
     }
 
     @Override
     public void paintComponent(Graphics g){
         super.paintComponent(g);
-        g.drawImage(fundo.get(1), 0,0,getWidth(),getHeight(),null);
+        if(fundo != null){
+            g.drawImage(fundo.get(0), 0,0,getWidth(),getHeight(),null);
+            fundo.remove(0);
+        }
 
         
     }
@@ -56,6 +87,7 @@ public class Menu extends JPanel implements KeyListener,ActionListener{
             jogo.timerSpawnInimigo.start();
             jogo.timerTiro.start();
             jogo.timerGeral.start();
+            jogo.timerCarregarFundo.start();
 
             janela.setContentPane(jogo);
             jogo.requestFocusInWindow();
@@ -79,13 +111,7 @@ public class Menu extends JPanel implements KeyListener,ActionListener{
     public void actionPerformed(ActionEvent e) {
        
 
-        if(indiceFundo <= totalFrames){
-            fundo.add(new ImageIcon(getClass().getResource("/menu/fundo/(" + indiceFundo + ").jpg")).getImage());
-            fundo.remove(0);
-            indiceFundo ++;
-        }else{
-            indiceFundo = 1;      
-        }
+        
         repaint();
 
         

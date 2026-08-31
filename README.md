@@ -26,25 +26,24 @@ O jogador controla uma nave, enfrenta inimigos e precisa sobreviver à fase.
 2. Clone este repositório:
 
 ```bash
-git clone https://github.com/Amaral188x/Jogo-de-nave
+git clone https://github.com/Amaral188x/Jogo-de-nave.git
 ```
 
 3. Entre na pasta do projeto:
 
-```bash
-cd nave
-```
+Jogo-de-nave
+
 
 4. Compile os arquivos:
 
 ```bash
-javac src/*.java
+javac javac -d bin src/*.java
 ```
 
 5. Execute o jogo:
 
 ```bash
-java -cp src Main
+java -cp bin Main
 ```
 
 ## Controles
