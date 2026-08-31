@@ -1,18 +1,62 @@
-## Getting Started
+# 🚀 Jogo da Nave
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+Um jogo de nave desenvolvido em **Java** para demonstrar conhecimentos em **Programação Orientada a Objetos (POO)** e desenvolvimento de jogos.
 
-## Folder Structure
+##  Sobre o projeto
 
-The workspace contains two folders by default, where:
+O jogador controla uma nave, enfrenta inimigos e precisa sobreviver à fase.
 
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
+* Sistema de movimentação e tiros
+* Inimigos e colisões
+* Animações
+* Efeitos sonoros
+* Menu inicial
+* Sistema de vida e dano
 
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
+##  Tecnologias
 
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
+* Java
+* Java Swing
+* Programação Orientada a Objetos
+* Git e GitHub
 
-## Dependency Management
+##  Como executar
 
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+1. Instale o **Java JDK**.
+2. Clone este repositório:
+
+```bash
+git clone https://github.com/Amaral188x/Jogo-de-nave
+```
+
+3. Entre na pasta do projeto:
+
+```bash
+cd nave
+```
+
+4. Compile os arquivos:
+
+```bash
+javac src/*.java
+```
+
+5. Execute o jogo:
+
+```bash
+java -cp src Main
+```
+
+## Controles
+W-Cima
+S-Baixo
+A-Esquerda
+D-Direita
+M-Ativar/desativar mouse
+Espaço-Atirar
+Mouse botão esquerdo - Atirar
+
+##  Status
+
+ Fase 1 concluída
+🚧 Projeto em desenvolvimento
