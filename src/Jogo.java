@@ -32,6 +32,7 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
     private ArrayList<Tiro> tirosNave = new ArrayList<>(), tirosParaRemover = new ArrayList<>();
     private ArrayList<Inimigo> inimigos = new ArrayList<>(), inimigosParaRemover = new ArrayList<>();
 
+    @SuppressWarnings("unused") // //Só para tirar o  aviso que diz que pontos não está sendo usado ( Esta sendo usada para sistema progressão)
     private int indiceFundo = 1,totalFrames = 251, indiceAnimacaoTiro, pontos = 0, indiceTurbina = 0;
     private Image tiroNaveImagem = carregarSprite("/nave/tiro.png"), inimigoImg = carregarSprite("/inimigo/inimigo.png");
 
@@ -263,6 +264,7 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
 
                 if(inimigo.podeExcluir){
                     inimigosParaRemover.add(inimigo);
+                    pontos ++;
                 }
 
                 for(Tiro tiro : tirosNave){

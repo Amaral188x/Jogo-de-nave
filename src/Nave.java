@@ -6,6 +6,7 @@ import javax.swing.JFrame;
 
 public class Nave {
 
+    @SuppressWarnings("unused") //Só para tirar o  aviso que diz que não está sendo usada ( Esta sendo usada para pegar o tamanho da janela)
     private JFrame janela;
     public int x,y,vida,vel = 20,
         tamX = 150,

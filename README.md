@@ -20,6 +20,19 @@ O jogador controla uma nave, enfrenta inimigos e precisa sobreviver à fase.
 * Programação Orientada a Objetos
 * Git e GitHub
 
+## Habilidades demonstradas
+
+* Controle de memória
+* Desenvolvimento de interfaces
+* Otimização
+* Tratamento de erros
+* POO (Programação orientada a objetos)
+* Controle de versionamento
+* Métodos
+* Polimorfismo
+* Reutilização de códigos
+
+
 ##  Como executar
 
 1. Instale o **Java JDK**.

@@ -16,7 +16,8 @@ public class Inimigo implements ActionListener{
     private Timer timer;
     private Som SomExplosao = new Som("/sons/inimigo/explosao.wav");
 
-    public Inimigo(Image imgInimigo,ArrayList<Image> explosao, ArrayList fumaca){
+    @SuppressWarnings("unchecked")
+    public Inimigo(Image imgInimigo,ArrayList<Image> explosao, @SuppressWarnings("rawtypes")  ArrayList fumaca){
         this.imgInimigo = imgInimigo;
         this.explosao = explosao;
         this.fumaca = fumaca;
