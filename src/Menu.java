@@ -66,7 +66,7 @@ public class Menu extends JPanel implements KeyListener,ActionListener{
     @Override
     public void paintComponent(Graphics g){
         super.paintComponent(g);
-        if(fundo != null){
+        if(fundo.size() >= 3){
             g.drawImage(fundo.get(0), 0,0,getWidth(),getHeight(),null);
             fundo.remove(0);
         }
