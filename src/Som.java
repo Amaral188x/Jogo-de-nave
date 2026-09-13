@@ -3,15 +3,27 @@
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.FloatControl;
 
 
 public class Som {
     private Clip clip;
     private String caminho;
+    private float volume = 1.0f;
 
     public Som(String caminho){
         this.caminho = caminho;
         
+    }
+
+    public void setVolume(float volume){
+        this.volume = volume;
+        if(clip != null && clip.isOpen() && clip.isControlSupported(FloatControl.Type.MASTER_GAIN)){
+            FloatControl gain = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+            float dB = (float) (Math.log10(Math.max(0.0001f, this.volume)) * 20.0);
+            gain.setValue(dB);
+
+        }
     }
 
     public void tocarSom(){
