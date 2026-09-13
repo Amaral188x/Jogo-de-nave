@@ -8,7 +8,7 @@ public class Nave {
 
     @SuppressWarnings("unused") //Só para tirar o  aviso que diz que não está sendo usada ( Esta sendo usada para pegar o tamanho da janela)
     private JFrame janela;
-    public int x,y,vida,vel = 20,
+    public int x, y, vida, vidaMaxima, vel = 20,
         tamX = 150,
         tamY = 150;
     private Image naveImg;
@@ -18,6 +18,8 @@ public class Nave {
         this.janela = janela;
         x = janela.getWidth() / 2;
         y = janela.getHeight() / 2;
+        vida = 20;
+        vidaMaxima = 20;
         
 
     }

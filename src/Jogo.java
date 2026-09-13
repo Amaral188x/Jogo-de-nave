@@ -24,7 +24,7 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
 
     private Som somTiro = new Som("/sons/nave/tiro.wav");
 
-    private ArrayList<Image> fundo = new ArrayList<>(), animacaoTiroNave = carregarsprites("/nave/animacaoTiro/", 4),
+    private ArrayList<Image> vidaNaveFrames = new ArrayList<>(), fundo = new ArrayList<>(), animacaoTiroNave = carregarsprites("/nave/animacaoTiro/", 4),
     animacaoTurbina = carregarsprites("/nave/turbina/", 6), acertoSprites = carregarsprites("/inimigo/acerto/", 10),
     explosaoInimigo = carregarsprites("/inimigo/explosao/", 10),fumaca = carregarsprites("/inimigo/fumaça/", 4);
 
@@ -33,7 +33,7 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
     private ArrayList<Inimigo> inimigos = new ArrayList<>(), inimigosParaRemover = new ArrayList<>();
 
     @SuppressWarnings("unused") // //Só para tirar o  aviso que diz que pontos não está sendo usado ( Esta sendo usada para sistema progressão)
-    private int indiceFundo = 1,totalFrames = 251, indiceAnimacaoTiro, pontos = 0, indiceTurbina = 0;
+    private int indiceFundo = 1,totalFrames = 251, totalFramesVida = 300, numeroFrameAtualVidaNave = 1, indiceAnimacaoTiro, pontos = 0, indiceTurbina = 0;
     private Image tiroNaveImagem = carregarSprite("/nave/tiro.png"), inimigoImg = carregarSprite("/inimigo/inimigo.png");
 
     private boolean 
@@ -63,6 +63,10 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
                 fundo.add(new ImageIcon(getClass().getResource("/jogo/fundo/(" + i + ").jpg")).getImage());
             }
 
+            for (int i = 1; i <= 10; i++){
+                fundo.add(new ImageIcon(getClass().getResource("/nave/vida_normal/("+ i +").png")).getImage());
+            }
+
             timerCarregarFundo = new Timer(5,new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e){
@@ -77,6 +81,26 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
                             indiceFundo = 1;      
                         }
 
+                        if(numeroFrameAtualVidaNave < totalFramesVida){
+                            if(vidaNaveFrames.size() < 20 && nave.vida > (nave.vidaMaxima / 2)){
+                                BufferedImage img = ImageIO.read(getClass().getResource("/nave/vida_normal/(" + numeroFrameAtualVidaNave + ").png"));
+                                vidaNaveFrames.add(img);
+                                numeroFrameAtualVidaNave ++;
+                                
+                            }else if(vidaNaveFrames.size() < 20 && nave.vida <= nave.vidaMaxima /2 && nave.vida > 5 ){
+                                BufferedImage img = ImageIO.read(getClass().getResource("/nave/vida_metade/(" + numeroFrameAtualVidaNave + ").png"));
+                                vidaNaveFrames.add(img);
+                                numeroFrameAtualVidaNave ++;
+
+                            }else if(vidaNaveFrames.size() < 20 && nave.vida <= 5 ){
+                                BufferedImage img = ImageIO.read(getClass().getResource("/nave/vida_baixa/(" + numeroFrameAtualVidaNave + ").png"));
+                                vidaNaveFrames.add(img);
+                                numeroFrameAtualVidaNave ++;
+                            }
+                        }else{
+                             numeroFrameAtualVidaNave = 1;
+                        }
+
                     }catch(Exception Err){
                         System.out.println("ERRO AO CARREEGAR IMAGEM DO FUNDO! CÓDIGO DE ERRO: " + Err);
                     }
@@ -85,7 +109,7 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
             
 
             //Timers==================================
-            timerGeral = new Timer(16,this);
+            timerGeral = new Timer( 16,this);
             timerTiro = new Timer(200,new ActionListener(){
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -138,9 +162,18 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
     @Override
     public void paintComponent(Graphics g){
         super.paintComponent(g);
-        if(fundo != null){
+        if(!fundo.isEmpty() && fundo.size() >= 2){
             g.drawImage(fundo.get(1),0,0,getWidth(),getHeight(),null);
-            fundo.remove(0);
+            if(fundo.size() >= 3){
+                fundo.remove(0);
+            }
+        }
+
+        if(vidaNaveFrames.size() >= 2 ){
+            g.drawImage(vidaNaveFrames.get(1), 20,20, 200,100, null);
+            if(vidaNaveFrames.size() >= 3){
+                vidaNaveFrames.remove(0);
+            }
         }
 
         
@@ -150,17 +183,17 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
             }
         }
 
-        if(inimigos != null){
+        if(!inimigos.isEmpty()){
             for(Inimigo inimigo : inimigos){
                 inimigo.desenhar(g);
             }
         }
         
-        if(animacaoTurbina != null){
+        if(!animacaoTurbina.isEmpty()){
             g.drawImage(animacaoTurbina.get(indiceTurbina), nave.x + 42, nave.y + 110,64,64,null);
         }
 
-        if(tirosNave != null){
+        if(!tirosNave.isEmpty()){
             for(Tiro tiro : tirosNave){
                 tiro.desenharTiro(g);    
             }
@@ -259,7 +292,7 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
                 if(inimigo.getBounds().intersects(nave.getbounds()) & inimigo.podeColidir){
                        
                         inimigo.vida = 0;
-                        nave.vida -= 10;
+                        nave.vida -= 2;
                     }
 
                 if(inimigo.podeExcluir){
