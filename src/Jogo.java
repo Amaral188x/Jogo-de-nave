@@ -22,7 +22,7 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
     private Menu menu;
     public Timer timerGeral, timerTiro, timerAnimacao, timerSpawnInimigo,timerCarregarFundo;
 
-    private Som somTiro = new Som("/sons/nave/tiro.wav");
+    private Som somTiro = new Som("/sons/nave/tiro.wav"),somFundo = new Som("jogo/fundoSons/fundo.wav");
 
     private ArrayList<Image> vidaNaveFrames = new ArrayList<>(), fundo = new ArrayList<>(), animacaoTiroNave = carregarsprites("/nave/animacaoTiro/", 4),
     animacaoTurbina = carregarsprites("/nave/turbina/", 6), acertoSprites = carregarsprites("/inimigo/acerto/", 10),
@@ -32,7 +32,7 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
     private ArrayList<Tiro> tirosNave = new ArrayList<>(), tirosParaRemover = new ArrayList<>();
     private ArrayList<Inimigo> inimigos = new ArrayList<>(), inimigosParaRemover = new ArrayList<>();
 
-    @SuppressWarnings("unused") // //Só para tirar o  aviso que diz que pontos não está sendo usado ( Esta sendo usada para sistema progressão)
+    @SuppressWarnings("unused") // //Só para tirar o  aviso que diz que pontos não está sendo usado ( Está sendo usada para sistema progressão)
     private int indiceFundo = 1,totalFrames = 251, totalFramesVida = 300, numeroFrameAtualVidaNave = 1, indiceAnimacaoTiro, pontos = 0, indiceTurbina = 0;
     private Image tiroNaveImagem = carregarSprite("/nave/tiro.png"), inimigoImg = carregarSprite("/inimigo/inimigo.png");
 
@@ -57,7 +57,8 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
             addMouseMotionListener(this);
             
             nave = new Nave(new ImageIcon(getClass().getResource("/nave/nave.png")).getImage(),janela);
-            
+            somFundo.tocarLoop();
+            somFundo.setVolume(2.0f);
 
             for (int i = 1; i <= 10; i++){
                 fundo.add(new ImageIcon(getClass().getResource("/jogo/fundo/(" + i + ").jpg")).getImage());
@@ -116,7 +117,9 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
 
                     if(atirar){
                         tirosNave.add(new Tiro(nave.x + 70,nave.y,tiroNaveImagem,acertoSprites));
+                        
                         somTiro.tocarSom();
+                        somTiro.setVolume(0.5f);
                     }
                 }
             });
@@ -219,6 +222,7 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
            timerSpawnInimigo.stop();
            timerTiro.stop();
            timerCarregarFundo.stop();
+           somFundo.parar();
            pontos = 0;
 
            inimigos.clear();
@@ -284,6 +288,10 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
     //Atualizar variáveis e fazer outras coisas===========================================
     @Override
     public void actionPerformed(ActionEvent e) {
+
+        if(somFundo.terminou()){
+            somFundo.tocarLoop();
+        }
 
         if(inimigos != null){
             for(Inimigo inimigo : inimigos){
