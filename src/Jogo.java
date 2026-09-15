@@ -22,18 +22,18 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
     private Menu menu;
     public Timer timerGeral, timerTiro, timerAnimacao, timerSpawnInimigo,timerCarregarFundo;
 
-    private Som somTiro = new Som("/sons/nave/tiro.wav"),somFundo = new Som("jogo/fundoSons/fundo.wav");
+    private Som somTiro = new Som("/sons/nave/tiro.wav"),somFundo = new Som("sons/fundo/fundo.wav");
 
     private ArrayList<Image> vidaNaveFrames = new ArrayList<>(), fundo = new ArrayList<>(), animacaoTiroNave = carregarsprites("/nave/animacaoTiro/", 4),
-    animacaoTurbina = carregarsprites("/nave/turbina/", 6), acertoSprites = carregarsprites("/inimigo/acerto/", 10),
-    explosaoInimigo = carregarsprites("/inimigo/explosao/", 10),fumaca = carregarsprites("/inimigo/fumaça/", 4);
+    animacaoTurbina = carregarsprites("/nave/turbina/", 6), acertoSprites = carregarsprites("/inimigo/acerto/", 15),
+    explosaoInimigo = carregarsprites("/inimigo/explosao/", 10),fumaca = carregarsprites("/inimigo/fumaça/", 4),fumacaNaveSprites = carregarsprites("/nave/fumaça/", 45);
 
 
     private ArrayList<Tiro> tirosNave = new ArrayList<>(), tirosParaRemover = new ArrayList<>();
     private ArrayList<Inimigo> inimigos = new ArrayList<>(), inimigosParaRemover = new ArrayList<>();
 
     @SuppressWarnings("unused") // //Só para tirar o  aviso que diz que pontos não está sendo usado ( Está sendo usada para sistema progressão)
-    private int indiceFundo = 1,totalFrames = 251, totalFramesVida = 300, numeroFrameAtualVidaNave = 1, indiceAnimacaoTiro, pontos = 0, indiceTurbina = 0;
+    private int indiceFundo = 1,totalFrames = 251, indiceFumacaNave = 0, totalFramesVida = 300, numeroFrameAtualVidaNave = 1, indiceAnimacaoTiro, pontos = 0, indiceTurbina = 0;
     private Image tiroNaveImagem = carregarSprite("/nave/tiro.png"), inimigoImg = carregarSprite("/inimigo/inimigo.png");
 
     private boolean 
@@ -44,7 +44,8 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
         cima = false, 
         baixo = false, 
         esquerda = false, 
-        direita = false;
+        direita = false,
+        fumacaNave = false;
 
 
     public Jogo(JFrame janela,Menu menu){
@@ -89,6 +90,8 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
                                 numeroFrameAtualVidaNave ++;
                                 
                             }else if(vidaNaveFrames.size() < 20 && nave.vida <= nave.vidaMaxima /2 && nave.vida > 5 ){
+                                nave.naveImg = carregarSprite("/nave/nave_Danificada.png");
+                                fumacaNave = true;
                                 BufferedImage img = ImageIO.read(getClass().getResource("/nave/vida_metade/(" + numeroFrameAtualVidaNave + ").png"));
                                 vidaNaveFrames.add(img);
                                 numeroFrameAtualVidaNave ++;
@@ -147,12 +150,18 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
                     }else{
                         indiceTurbina = 0;
                     }
+
+                    if(fumacaNave){
+                        if( indiceFumacaNave < fumacaNaveSprites.size() -1 ){
+                            indiceFumacaNave ++;
+                        }else{
+                            indiceFumacaNave = 0;
+                        }
+                    }
                 }
             });
 
             //========================================
-
-
 
         }catch(Exception Err){
             System.out.print("ERRO NO CONSTRUTOR DA CLASSE JOGO! CÓDIGO DE ERRO: " + Err);
@@ -178,7 +187,6 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
                 vidaNaveFrames.remove(0);
             }
         }
-
         
         if(atirar){
             if(animacaoTiroNave != null){
@@ -196,6 +204,9 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
             g.drawImage(animacaoTurbina.get(indiceTurbina), nave.x + 42, nave.y + 110,64,64,null);
         }
 
+        
+        
+
         if(!tirosNave.isEmpty()){
             for(Tiro tiro : tirosNave){
                 tiro.desenharTiro(g);    
@@ -203,6 +214,9 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
         }
 
         nave.desenharNave(g);
+        if(fumacaNave){
+            g.drawImage(fumacaNaveSprites.get(indiceFumacaNave), nave.x + 10, nave.y + 35, 200,200,null);
+        }
     }
     //========================================================================
 
@@ -346,16 +360,16 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
         
         
 
-        if(cima){
+        if(cima && nave.y > 0){
             nave.y -= nave.vel;
         }
-        if(baixo){
+        if(baixo && nave.y < 900){
             nave.y += nave.vel;
         }
-        if(esquerda){
+        if(esquerda && nave.x > 0){
             nave.x -= nave.vel;
         }
-        if(direita){
+        if(direita && nave.x < 1800){
             nave.x += nave.vel;
         }
 

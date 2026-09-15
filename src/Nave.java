@@ -11,7 +11,7 @@ public class Nave {
     public int x, y, vida, vidaMaxima, vel = 20,
         tamX = 150,
         tamY = 150;
-    private Image naveImg;
+    public Image naveImg;
 
     public Nave(Image img, JFrame janela){
         this.naveImg = img;
