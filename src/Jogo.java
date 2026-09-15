@@ -20,9 +20,9 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
     private Nave nave;
     private JFrame janela;
     private Menu menu;
-    public Timer timerGeral, timerTiro, timerAnimacao, timerSpawnInimigo,timerCarregarFundo;
+    public Timer timerGeral, timerTiro, timerAnimacao, timerSpawnInimigo, timerCarregarFundo;
 
-    private Som somTiro = new Som("/sons/nave/tiro.wav"),somFundo = new Som("sons/fundo/fundo.wav");
+    private Som somTiro = new Som("/sons/nave/tiro.wav"),somExplosaoNave = new Som("/nave/explosao.wav"), somFundo = new Som("sons/fundo/fundo.wav");
 
     private ArrayList<Image> explosaoNave = carregarsprites("/nave/explosao/", 63), vidaNaveFrames = new ArrayList<>(), fundo = new ArrayList<>(), animacaoTiroNave = carregarsprites("/nave/animacaoTiro/", 4),
     animacaoTurbina = carregarsprites("/nave/turbina/", 6), acertoSprites = carregarsprites("/inimigo/acerto/", 15),
@@ -56,6 +56,7 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
             addKeyListener(this);
             addMouseListener(this);
             addMouseMotionListener(this);
+            somExplosaoNave.tocarSom();
             
             nave = new Nave(new ImageIcon(getClass().getResource("/nave/nave.png")).getImage(),janela);
             somFundo.tocarLoop();
@@ -216,7 +217,7 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
         }
 
         nave.desenharNave(g);
-        if(fumacaNave && nave.vida > 0){
+        if(fumacaNave && nave.vida <= nave.vidaMaxima / 2 && nave.vida > 0){
             g.drawImage(fumacaNaveSprites.get(indiceFumacaNave), nave.x + 10, nave.y + 35, 200,200,null);
         }
     }
@@ -240,6 +241,7 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
            timerCarregarFundo.stop();
            somFundo.parar();
            pontos = 0;
+           nave.vida = nave.vidaMaxima;
 
            inimigos.clear();
            inimigosParaRemover.clear();
@@ -305,11 +307,17 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
     @Override
     public void actionPerformed(ActionEvent e) {
 
-        if(somFundo.terminou()){
+        if(somFundo.terminou() && nave.vida > 0){
             somFundo.tocarLoop();
+        }else if(nave.vida <= 0){
+            somFundo.parar();
         }
 
         if(nave.vida <= 0){
+            if(somExplosaoNave.terminou()){
+                somExplosaoNave.tocarSom();
+            }
+
             if(indiceExplosaoNave < explosaoNave.size() - 1){
                 indiceExplosaoNave ++;
                 nave.naveImg = carregarSprite("/nave/explosao/(1).png");
@@ -318,6 +326,7 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
             }
         }else{
             if(nave.vida > nave.vidaMaxima / 2){
+                indiceExplosaoNave = 0;
                 nave.naveImg = carregarSprite("/nave/nave.png");
             }else{
                 nave.naveImg = carregarSprite("/nave/nave_Danificada.png");
