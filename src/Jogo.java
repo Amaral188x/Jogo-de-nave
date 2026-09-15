@@ -220,6 +220,13 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
         if(fumacaNave && nave.vida <= nave.vidaMaxima / 2 && nave.vida > 0){
             g.drawImage(fumacaNaveSprites.get(indiceFumacaNave), nave.x + 10, nave.y + 35, 200,200,null);
         }
+
+        g.setFont(new java.awt.Font("Arial", java.awt.Font.BOLD, 24));
+        g.setColor(java.awt.Color.RED);
+        g.drawString("LIFE: ", 10, 30);
+
+        g.setColor(java.awt.Color.GREEN);
+        g.drawString("SCORE: " + pontos, 10, 150);
     }
     //========================================================================
 
