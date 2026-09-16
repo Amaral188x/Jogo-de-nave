@@ -35,7 +35,7 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
     @SuppressWarnings("unused") // //Só para tirar o  aviso que diz que pontos não está sendo usado ( Está sendo usada para sistema progressão)
     private int indiceAnimacaoDerrota = 1, indiceFundo = 1,indiceExplosaoNave = 0, totalFrames = 251, indiceFumacaNave = 0, totalFramesVida = 300, numeroFrameAtualVidaNave = 1, indiceAnimacaoTiro, pontos = 0, indiceTurbina = 0;
     private Image tiroNaveImagem = carregarSprite("/nave/tiro.png"), inimigoImg = carregarSprite("/inimigo/inimigo.png");
-
+    private Chefe chefe = new Chefe("/chefes/chefe1/chefe.png", "/chefes/chefe1/tiroChefe1.png");
     private boolean 
 
     //controles via teclado
@@ -250,12 +250,17 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
             g.drawImage(explosaoNave.get(indiceExplosaoNave), nave.x, nave.y, 256, 256,null);
         }
         
+        if(pontos >= 1){
+            chefe.desenharchefe1(g);
+        }
 
         if(!tirosNave.isEmpty()){
             for(Tiro tiro : tirosNave){
                 tiro.desenharTiro(g);    
             }
         }
+
+        
 
         nave.desenharNave(g);
         if(fumacaNave && nave.vida <= nave.vidaMaxima / 2 && nave.vida > 0){
@@ -362,6 +367,9 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
     @Override
     public void actionPerformed(ActionEvent e) {
 
+
+        
+
         if(somFundo.terminou() && nave.vida > 0){
             somFundo.setVolume(2.0f);
             somFundo.tocarLoop();
@@ -389,6 +397,7 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
                 nave.naveImg = carregarSprite("/nave/nave_Danificada.png");
             }
         }
+
 
         if(inimigos != null){
             for(Inimigo inimigo : inimigos){
@@ -421,9 +430,71 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
                         tiro.desenharAcerto = true;
                         tiro.vel = -inimigo.vel;
                     }
+
+                    if (pontos >= 1){
+                        timerSpawnInimigo.stop();
+                        if (tiro.getBounds().intersects(chefe.getBounds()) ) {
+                            chefe.vida -= 3;
+                            chefe.areaColisãoCorpo -= 5;
+                            if (chefe.areaColisãoCorpo <= 20){
+                                chefe.areaColisãoCorpo = 110;
+                            }
+                            tiro.desenharAcerto = true;
+                            tiro.podeCausarDano = false;
+                            tiro.vel = -chefe.vel;
+                            if(tiro.podeExcluir){
+                                tirosParaRemover.add(tiro);
+                            }
+                        }
+
+                        if (tiro.getBounds().intersects(chefe.getBoundsAsaDireitaCorpo()) || tiro.getBounds().intersects(chefe.getBoundsAsaEsquerdaCorpo()) && tiro.podeCausarDano){
+                            if (chefe.areaColisaoAsasCorpo <= 6){
+                                chefe.areaColisaoAsasCorpo = 50;
+                            }
+                            chefe.areaColisaoAsasCorpo -= 5;
+                            chefe.vida-= 3;
+                            tiro.desenharAcerto = true;
+                            tiro.podeCausarDano = false;
+                            tiro.vel = -chefe.vel;  
+                            if(tiro.podeExcluir){
+                                tirosParaRemover.add(tiro);
+                            }
+                        }
+
+                        if ( tiro.getBounds().intersects(chefe.getBoundsAsaDireira2()) || tiro.getBounds().intersects(chefe.getBoundsAsaDireita3()) || tiro.getBounds().intersects(chefe.getBoundsAsaDireita4()) || tiro.getBounds().intersects(chefe.getBoundsAsaDireita5()) && tiro.podeCausarDano){
+                                chefe.areaColisaoAsaDireita -= 5;
+                                if (chefe.areaColisaoAsaDireita <= 6){
+                                    chefe.areaColisaoAsaDireita = 50;
+                                }
+                                chefe.vida -= 1;
+                                tiro.desenharAcerto = true;
+                                tiro.podeCausarDano = false;
+                                tiro.vel = -chefe.vel;
+                                if(tiro.podeExcluir){
+                                    tirosParaRemover.add(tiro);
+                                }
+                            }
+                        
+                        if (tiro.getBounds().intersects(chefe.getBoundsAsaEsquerda2()) || tiro.getBounds().intersects(chefe.getBoundsAsaEsquerda3()) || tiro.getBounds().intersects(chefe.getBoundsAsaEsquerda4()) || tiro.getBounds().intersects(chefe.getBoundsAsaEsquerda5()) && tiro.podeCausarDano){
+                            chefe.areaColisaoAsaEsquerda -= 5;
+                            if (chefe.areaColisaoAsaEsquerda <= 6){
+                                chefe.areaColisaoAsaEsquerda = 50;
+                            }
+                            tiro.desenharAcerto = true;
+                            tiro.podeCausarDano = false;
+                            tiro.vel = -chefe.vel;
+                            if(tiro.podeExcluir){
+                                tirosParaRemover.add(tiro);
+                            }
+
+                        }
+                    }
                 }
+            
             }
         }
+            
+        
 
         inimigos.removeAll(inimigosParaRemover);
         inimigosParaRemover.clear();
@@ -437,6 +508,7 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
             }
             
         }
+
         tirosNave.removeAll(tirosParaRemover);
         tirosParaRemover.clear();
 

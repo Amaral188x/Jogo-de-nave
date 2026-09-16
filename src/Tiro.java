@@ -27,6 +27,9 @@ public class Tiro implements ActionListener{
     }
 
     public Rectangle getBounds(){
+        if(!podeCausarDano){
+            return new Rectangle(0,0,0,0);
+        }
         return new Rectangle(x,y,tamX,tamY);
     }
 
