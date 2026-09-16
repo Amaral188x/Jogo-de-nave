@@ -20,7 +20,7 @@ public class Som {
         this.volume = volume;
         if(clip != null && clip.isOpen() && clip.isControlSupported(FloatControl.Type.MASTER_GAIN)){
             FloatControl gain = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-            float dB = (float) (Math.log10(Math.max(0.0001f, this.volume)) * 20.0);
+            float dB = (float) (Math.log10(Math.max(0.001f, this.volume)) * 20.0);
             gain.setValue(dB);
 
         }

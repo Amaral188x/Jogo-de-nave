@@ -22,7 +22,7 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
     private Menu menu;
     public Timer timerGeral, timerTiro, timerAnimacao, timerSpawnInimigo, timerCarregarFundo;
 
-    private Som somTiro = new Som("/sons/nave/tiro.wav"),somExplosaoNave = new Som("/nave/explosao.wav"), somFundo = new Som("sons/fundo/fundo.wav");
+    private Som perdeu = new Som("sons/fundo/perdeu.wav"), somTiro = new Som("/sons/nave/tiro.wav"),somExplosaoNave = new Som("/nave/explosao.wav"), somFundo = new Som("sons/fundo/fundo.wav");
 
     private ArrayList<Image> framesDerrota = new ArrayList<>(), explosaoNave = carregarsprites("/nave/explosao/", 63), vidaNaveFrames = new ArrayList<>(), fundo = new ArrayList<>(), animacaoTiroNave = carregarsprites("/nave/animacaoTiro/", 4),
     animacaoTurbina = carregarsprites("/nave/turbina/", 6), acertoSprites = carregarsprites("/inimigo/acerto/", 15),
@@ -57,6 +57,7 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
             addMouseListener(this);
             addMouseMotionListener(this);
             somExplosaoNave.tocarSom();
+            perdeu.setVolume(3.0f);
             
             nave = new Nave(new ImageIcon(getClass().getResource("/nave/nave.png")).getImage(),janela);
             somFundo.tocarLoop();
@@ -91,7 +92,13 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
                                     BufferedImage img = ImageIO.read(getClass().getResource("/jogo/derrota/(" + indiceAnimacaoDerrota + ").png"));
                                     framesDerrota.add(img);
                                     indiceAnimacaoDerrota ++;
+                                    if(indiceAnimacaoDerrota == 57){
+                                        
+                                        perdeu.tocarSom();
+                                        
+                                    }
                                 }else{
+                                    
                                     indiceAnimacaoDerrota = 1;
                                     timerGeral.stop();
                                     timerAnimacao.stop();
