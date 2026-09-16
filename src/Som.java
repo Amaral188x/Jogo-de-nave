@@ -30,7 +30,10 @@ public class Som {
         try {
             AudioInputStream audioStream = AudioSystem.getAudioInputStream(getClass().getResource(caminho)); //prepara o audio com dados 
             clip = AudioSystem.getClip();//cria uma obeto Clip e armazena o som inteiro na memória para poder usar dps
+            clip = AudioSystem.getClip();
+
             clip.open(audioStream);
+            setVolume(volume); // aplica o volume ao novo Clip
             clip.start();
         }catch( Exception e){System.out.println("Erro na classe som " + e); }
     }
