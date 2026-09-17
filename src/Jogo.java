@@ -260,8 +260,6 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
             }
         }
 
-        
-
         nave.desenharNave(g);
         if(fumacaNave && nave.vida <= nave.vidaMaxima / 2 && nave.vida > 0){
             g.drawImage(fumacaNaveSprites.get(indiceFumacaNave), nave.x + 10, nave.y + 35, 200,200,null);
@@ -270,6 +268,7 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
         g.setFont(new java.awt.Font("Arial", java.awt.Font.BOLD, 24));
         g.setColor(java.awt.Color.RED);
         g.drawString("LIFE: ", 10, 30);
+        g.drawString("vida asas: " + chefe.vidaAsaEsquerda + " " + chefe.vidaaAsaDireita, 10, 200);
 
         g.setColor(java.awt.Color.GREEN);
         g.drawString("SCORE: " + pontos, 10, 150);
@@ -415,8 +414,6 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
                 }
 
                 for(Tiro tiro : tirosNave){
-                    
-
                     if(tiro.getBounds().intersects(inimigo.getBounds()) & inimigo.podeColidir){
                         if(tiro.podeCausarDano){
                             inimigo.vida --;
@@ -430,67 +427,71 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
                         tiro.desenharAcerto = true;
                         tiro.vel = -inimigo.vel;
                     }
-
-                    if (pontos >= 1){
-                        timerSpawnInimigo.stop();
-                        if (tiro.getBounds().intersects(chefe.getBounds()) ) {
-                            chefe.vida -= 3;
-                            chefe.areaColisãoCorpo -= 5;
-                            if (chefe.areaColisãoCorpo <= 20){
-                                chefe.areaColisãoCorpo = 110;
-                            }
-                            tiro.desenharAcerto = true;
-                            tiro.podeCausarDano = false;
-                            tiro.vel = -chefe.vel;
-                            if(tiro.podeExcluir){
-                                tirosParaRemover.add(tiro);
-                            }
-                        }
-
-                        if (tiro.getBounds().intersects(chefe.getBoundsAsaDireitaCorpo()) || tiro.getBounds().intersects(chefe.getBoundsAsaEsquerdaCorpo()) && tiro.podeCausarDano){
-                            if (chefe.areaColisaoAsasCorpo <= 6){
-                                chefe.areaColisaoAsasCorpo = 50;
-                            }
-                            chefe.areaColisaoAsasCorpo -= 5;
-                            chefe.vida-= 3;
-                            tiro.desenharAcerto = true;
-                            tiro.podeCausarDano = false;
-                            tiro.vel = -chefe.vel;  
-                            if(tiro.podeExcluir){
-                                tirosParaRemover.add(tiro);
-                            }
-                        }
-
-                        if ( tiro.getBounds().intersects(chefe.getBoundsAsaDireira2()) || tiro.getBounds().intersects(chefe.getBoundsAsaDireita3()) || tiro.getBounds().intersects(chefe.getBoundsAsaDireita4()) || tiro.getBounds().intersects(chefe.getBoundsAsaDireita5()) && tiro.podeCausarDano){
-                                chefe.areaColisaoAsaDireita -= 5;
-                                if (chefe.areaColisaoAsaDireita <= 6){
-                                    chefe.areaColisaoAsaDireita = 50;
-                                }
-                                chefe.vida -= 1;
-                                tiro.desenharAcerto = true;
-                                tiro.podeCausarDano = false;
-                                tiro.vel = -chefe.vel;
-                                if(tiro.podeExcluir){
-                                    tirosParaRemover.add(tiro);
-                                }
-                            }
-                        
-                        if (tiro.getBounds().intersects(chefe.getBoundsAsaEsquerda2()) || tiro.getBounds().intersects(chefe.getBoundsAsaEsquerda3()) || tiro.getBounds().intersects(chefe.getBoundsAsaEsquerda4()) || tiro.getBounds().intersects(chefe.getBoundsAsaEsquerda5()) && tiro.podeCausarDano){
-                            chefe.areaColisaoAsaEsquerda -= 5;
-                            if (chefe.areaColisaoAsaEsquerda <= 6){
-                                chefe.areaColisaoAsaEsquerda = 50;
-                            }
-                            tiro.desenharAcerto = true;
-                            tiro.podeCausarDano = false;
-                            tiro.vel = -chefe.vel;
-                            if(tiro.podeExcluir){
-                                tirosParaRemover.add(tiro);
-                            }
-
-                        }
+                }
+            }
+        }
+        if(pontos >= 1){
+            for(Tiro tiro : tirosNave){
+                timerSpawnInimigo.stop();
+                if (tiro.getBounds().intersects(chefe.getBounds()) ) {
+                    chefe.vida -= 3;
+                    chefe.areaColisãoCorpo -= 5;
+                    if (chefe.areaColisãoCorpo <= 20){
+                        chefe.areaColisãoCorpo = 110;
+                    }
+                    tiro.desenharAcerto = true;
+                    tiro.podeCausarDano = false;
+                    tiro.vel = -chefe.vel;
+                    if(tiro.podeExcluir){
+                        tirosParaRemover.add(tiro);
                     }
                 }
-            
+
+                if (tiro.getBounds().intersects(chefe.getBoundsAsaDireitaCorpo()) || tiro.getBounds().intersects(chefe.getBoundsAsaEsquerdaCorpo()) && tiro.podeCausarDano){
+                    if (chefe.areaColisaoAsasCorpo <= 6){
+                        chefe.areaColisaoAsasCorpo = 50;
+                    }
+                    chefe.areaColisaoAsasCorpo -= 5;
+                    chefe.vida-= 3;
+                    chefe.vidaaAsaDireita -= 1;
+                    tiro.desenharAcerto = true;
+                    tiro.podeCausarDano = false;
+                    tiro.vel = -chefe.vel;  
+                    if(tiro.podeExcluir){
+                        tirosParaRemover.add(tiro);
+                    }
+                }
+
+                if ( tiro.getBounds().intersects(chefe.getBoundsAsaDireira2()) || tiro.getBounds().intersects(chefe.getBoundsAsaDireita3()) || tiro.getBounds().intersects(chefe.getBoundsAsaDireita4()) || tiro.getBounds().intersects(chefe.getBoundsAsaDireita5()) && tiro.podeCausarDano){
+                        chefe.areaColisaoAsaDireita -= 5;
+                        if (chefe.areaColisaoAsaDireita <= 6){
+                            chefe.areaColisaoAsaDireita = 50;
+                        }
+                        
+                        chefe.vida -= 1;
+                        chefe.vidaaAsaDireita -= 1;
+                        tiro.desenharAcerto = true;
+                        tiro.podeCausarDano = false;
+                        tiro.vel = -chefe.vel;
+                        if(tiro.podeExcluir){
+                            tirosParaRemover.add(tiro);
+                        }
+                    }
+                
+                if (tiro.getBounds().intersects(chefe.getBoundsAsaEsquerda2()) || tiro.getBounds().intersects(chefe.getBoundsAsaEsquerda3()) || tiro.getBounds().intersects(chefe.getBoundsAsaEsquerda4()) || tiro.getBounds().intersects(chefe.getBoundsAsaEsquerda5()) && tiro.podeCausarDano){
+                    chefe.areaColisaoAsaEsquerda -= 5;
+                    if (chefe.areaColisaoAsaEsquerda <= 6){
+                        chefe.areaColisaoAsaEsquerda = 50;
+                    }
+
+                    chefe.vidaAsaEsquerda -= 1;
+                    tiro.desenharAcerto = true;
+                    tiro.podeCausarDano = false;
+                    tiro.vel = -chefe.vel;
+                    if(tiro.podeExcluir){
+                        tirosParaRemover.add(tiro);
+                    }
+                }
             }
         }
             

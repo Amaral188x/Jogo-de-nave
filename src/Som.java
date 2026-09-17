@@ -43,7 +43,7 @@ public class Som {
         AudioInputStream audioStream = AudioSystem.getAudioInputStream(getClass().getResource(caminho));
         clip = AudioSystem.getClip();
         clip.open(audioStream);
-        clip.loop(clip.LOOP_CONTINUOUSLY);
+        clip.loop(clip.LOOP_CONTINUOUSLY) ;
         clip.start();
         }catch(Exception e){
             System.out.println("\n Erro na classe som ao tocar loop" + e);
