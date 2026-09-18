@@ -79,8 +79,8 @@ public class Chefe {
         vel = 0;
 
         // Vida das asas
-        vidaAsaEsquerda = 100;
-        vidaaAsaDireita = 100;
+        vidaAsaEsquerda = 5;
+        vidaaAsaDireita = 10;
 
         // Áreas de colisão
         areaColisãoCorpo = 110;
@@ -123,7 +123,7 @@ public class Chefe {
         // CORPO
         // =====================================================
 
-        if (vida > 50) {
+        if (vida > 100) {
 
             g.drawImage(corpoNormal, chefeX - 150, chefeY, tamX, tamY, null
             );

@@ -42,7 +42,7 @@ public class Inimigo implements ActionListener{
     }
 
     public Rectangle getBounds(){
-        return new Rectangle(x, y, tamX, tamY);
+        return new Rectangle(x, y, tamX, tamY - 50);
     }
 
     @Override

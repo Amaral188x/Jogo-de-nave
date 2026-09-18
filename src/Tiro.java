@@ -34,15 +34,14 @@ public class Tiro implements ActionListener{
     }
 
     public void desenharTiro(Graphics g){
-        if(desenharAcerto){
-            img = acertoSprites.get(indiceAcerto);
+        if(desenharAcerto){img = acertoSprites.get(indiceAcerto);
             tamX = 64;
             tamY = 64;
-            g.drawImage(img, x -10,y - 100, tamX,tamY,null);
+            g.drawImage(img, x -20,y - 10 , tamX,tamY,null);
         }else{
             tamX = 16;
             tamY = 32;
-            g.drawImage(img, x,y, tamX,tamY,null);
+            g.drawImage(img, x, y , tamX,tamY,null);
         } 
     }
 

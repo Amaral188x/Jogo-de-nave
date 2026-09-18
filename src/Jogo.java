@@ -24,16 +24,16 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
 
     private Som perdeu = new Som("sons/fundo/perdeu.wav"), somTiro = new Som("/sons/nave/tiro.wav"),somExplosaoNave = new Som("/nave/explosao.wav"), somFundo = new Som("sons/fundo/fundo.wav");
 
-    private ArrayList<Image> framesDerrota = new ArrayList<>(), explosaoNave = carregarsprites("/nave/explosao/", 63), vidaNaveFrames = new ArrayList<>(), fundo = new ArrayList<>(), animacaoTiroNave = carregarsprites("/nave/animacaoTiro/", 4),
+    private ArrayList<Image>  curtoCircuito = carregarsprites("/chefes/chefe1/danificado/", 39), framesDerrota = new ArrayList<>(), explosaoNave = carregarsprites("/nave/explosao/", 63), vidaNaveFrames = new ArrayList<>(), fundo = new ArrayList<>(), animacaoTiroNave = carregarsprites("/nave/animacaoTiro/", 4),
     animacaoTurbina = carregarsprites("/nave/turbina/", 6), acertoSprites = carregarsprites("/inimigo/acerto/", 15),
     explosaoInimigo = carregarsprites("/inimigo/explosao/", 10),fumaca = carregarsprites("/inimigo/fumaça/", 4),fumacaNaveSprites = carregarsprites("/nave/fumaça/", 45);
 
 
-    private ArrayList<Tiro> tirosNave = new ArrayList<>(), tirosParaRemover = new ArrayList<>();
+    private ArrayList<Tiro> buracosDBala = new ArrayList<>(), tirosNave = new ArrayList<>(), tirosParaRemover = new ArrayList<>();
     private ArrayList<Inimigo> inimigos = new ArrayList<>(), inimigosParaRemover = new ArrayList<>();
 
     @SuppressWarnings("unused") // //Só para tirar o  aviso que diz que pontos não está sendo usado ( Está sendo usada para sistema progressão)
-    private int indiceAnimacaoDerrota = 1, indiceFundo = 1,indiceExplosaoNave = 0, totalFrames = 251, indiceFumacaNave = 0, totalFramesVida = 300, numeroFrameAtualVidaNave = 1, indiceAnimacaoTiro, pontos = 0, indiceTurbina = 0;
+    private int indiceCurto = 0, indiceAnimacaoDerrota = 1, indiceFundo = 1,indiceExplosaoNave = 0, totalFrames = 251, indiceFumacaNave = 0, totalFramesVida = 300, numeroFrameAtualVidaNave = 1, indiceAnimacaoTiro, pontos = 0, indiceTurbina = 0;
     private Image tiroNaveImagem = carregarSprite("/nave/tiro.png"), inimigoImg = carregarSprite("/inimigo/inimigo.png");
     private Chefe chefe = new Chefe("/chefes/chefe1/chefe.png", "/chefes/chefe1/tiroChefe1.png");
     private boolean 
@@ -193,7 +193,7 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
                         indiceTurbina = 0;
                     }
 
-                    if(fumacaNave){
+                    if(fumacaNave || chefe.vidaAsaEsquerda <= 0){
                         if( indiceFumacaNave < fumacaNaveSprites.size() -1 ){
                             indiceFumacaNave ++;
                         }else{
@@ -250,13 +250,24 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
             g.drawImage(explosaoNave.get(indiceExplosaoNave), nave.x, nave.y, 256, 256,null);
         }
         
-        if(pontos >= 1){
+        if(pontos >= 5){
             chefe.desenharchefe1(g);
+            if(chefe.vidaAsaEsquerda <= 0){
+                g.drawImage(curtoCircuito.get(indiceCurto), chefe.chefeX - 180, chefe.chefeY + 270,150, 150,null);
+                g.drawImage(fumacaNaveSprites.get(indiceFumacaNave), chefe.chefeX - 120, chefe.chefeY + 230, 150,150,null);
+            }
         }
 
         if(!tirosNave.isEmpty()){
             for(Tiro tiro : tirosNave){
                 tiro.desenharTiro(g);    
+            }
+        }
+
+        if(!buracosDBala.isEmpty()){
+            for(Tiro tiro : buracosDBala){
+                tiro.x += chefe.vel;
+                g.drawImage(new ImageIcon(getClass().getResource("/nave/marca de tiro.png")).getImage(),tiro.x, tiro.y, 20,20, null);
             }
         }
 
@@ -366,7 +377,13 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
     @Override
     public void actionPerformed(ActionEvent e) {
 
-
+        if(chefe.vidaAsaEsquerda <= 0 || chefe.vidaaAsaDireita <= 0){
+            if(indiceCurto < curtoCircuito.size() - 1){
+                indiceCurto ++;
+            }else{
+                indiceCurto = 0;
+            }
+        }
         
 
         if(somFundo.terminou() && nave.vida > 0){
@@ -430,7 +447,7 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
                 }
             }
         }
-        if(pontos >= 1){
+        if(pontos >= 5){
             for(Tiro tiro : tirosNave){
                 timerSpawnInimigo.stop();
                 if (tiro.getBounds().intersects(chefe.getBounds()) ) {
@@ -441,6 +458,7 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
                     }
                     tiro.desenharAcerto = true;
                     tiro.podeCausarDano = false;
+                    buracosDBala.add(tiro);
                     tiro.vel = -chefe.vel;
                     if(tiro.podeExcluir){
                         tirosParaRemover.add(tiro);
@@ -456,7 +474,8 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
                     chefe.vidaaAsaDireita -= 1;
                     tiro.desenharAcerto = true;
                     tiro.podeCausarDano = false;
-                    tiro.vel = -chefe.vel;  
+                    tiro.vel = 0;  
+                    buracosDBala.add(tiro);
                     if(tiro.podeExcluir){
                         tirosParaRemover.add(tiro);
                     }
@@ -467,12 +486,13 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
                         if (chefe.areaColisaoAsaDireita <= 6){
                             chefe.areaColisaoAsaDireita = 50;
                         }
-                        
+
                         chefe.vida -= 1;
                         chefe.vidaaAsaDireita -= 1;
                         tiro.desenharAcerto = true;
                         tiro.podeCausarDano = false;
                         tiro.vel = -chefe.vel;
+                        buracosDBala.add(tiro);
                         if(tiro.podeExcluir){
                             tirosParaRemover.add(tiro);
                         }
@@ -488,6 +508,7 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
                     tiro.desenharAcerto = true;
                     tiro.podeCausarDano = false;
                     tiro.vel = -chefe.vel;
+                    buracosDBala.add(tiro);
                     if(tiro.podeExcluir){
                         tirosParaRemover.add(tiro);
                     }
@@ -496,7 +517,9 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
         }
             
         
-
+        if(buracosDBala.size() >= 40){
+            buracosDBala.remove(0);
+        }
         inimigos.removeAll(inimigosParaRemover);
         inimigosParaRemover.clear();
 
