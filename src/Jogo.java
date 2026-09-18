@@ -33,7 +33,7 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
     private ArrayList<Inimigo> inimigos = new ArrayList<>(), inimigosParaRemover = new ArrayList<>();
 
     @SuppressWarnings("unused") // //Só para tirar o  aviso que diz que pontos não está sendo usado ( Está sendo usada para sistema progressão)
-    private int indiceCurto = 0, indiceAnimacaoDerrota = 1, indiceFundo = 1,indiceExplosaoNave = 0, totalFrames = 251, indiceFumacaNave = 0, totalFramesVida = 300, numeroFrameAtualVidaNave = 1, indiceAnimacaoTiro, pontos = 0, indiceTurbina = 0;
+    private int indiceCurto = 0, indiceCurto2 = 0, indiceAnimacaoDerrota = 1, indiceFundo = 1,indiceExplosaoNave = 0, totalFrames = 251, indiceFumacaNave = 0, totalFramesVida = 300, numeroFrameAtualVidaNave = 1, indiceAnimacaoTiro, pontos = 0, indiceTurbina = 0;
     private Image tiroNaveImagem = carregarSprite("/nave/tiro.png"), inimigoImg = carregarSprite("/inimigo/inimigo.png");
     private Chefe chefe = new Chefe("/chefes/chefe1/chefe.png", "/chefes/chefe1/tiroChefe1.png");
     private boolean 
@@ -246,6 +246,7 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
             g.drawImage(animacaoTurbina.get(indiceTurbina), nave.x + 42, nave.y + 110,64,64,null);
         }
 
+
         if(nave.vida <= 0){
             g.drawImage(explosaoNave.get(indiceExplosaoNave), nave.x, nave.y, 256, 256,null);
         }
@@ -255,6 +256,8 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
             if(chefe.vidaAsaEsquerda <= 0){
                 g.drawImage(curtoCircuito.get(indiceCurto), chefe.chefeX - 180, chefe.chefeY + 270,150, 150,null);
                 g.drawImage(fumacaNaveSprites.get(indiceFumacaNave), chefe.chefeX - 120, chefe.chefeY + 230, 150,150,null);
+                g.drawImage(acertoSprites.get(indiceCurto2), chefe.chefeX - 130, chefe.chefeY + 230, 150,150,null);
+                
             }
         }
 
@@ -383,6 +386,12 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
             }else{
                 indiceCurto = 0;
             }
+
+            if(indiceCurto2 < acertoSprites.size() - 1){
+                indiceCurto2 ++;
+            }else{
+                indiceCurto2 = 0;
+            }
         }
         
 
@@ -448,6 +457,13 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
             }
         }
         if(pontos >= 5){
+            if(pontos == 5){
+                somFundo.parar();
+                somFundo = new Som("/sons/fundo/fundochefe1.wav");
+                somFundo.tocarLoop();
+                pontos ++;
+            }
+
             for(Tiro tiro : tirosNave){
                 timerSpawnInimigo.stop();
                 if (tiro.getBounds().intersects(chefe.getBounds()) ) {
