@@ -24,7 +24,7 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
 
     private Som perdeu = new Som("sons/fundo/perdeu.wav"), somTiro = new Som("/sons/nave/tiro.wav"),somExplosaoNave = new Som("/nave/explosao.wav"), somFundo = new Som("sons/fundo/fundo.wav");
 
-    private ArrayList<Image>  curtoCircuito = carregarsprites("/chefes/chefe1/danificado/", 39), framesDerrota = new ArrayList<>(), explosaoNave = carregarsprites("/nave/explosao/", 63), vidaNaveFrames = new ArrayList<>(), fundo = new ArrayList<>(), animacaoTiroNave = carregarsprites("/nave/animacaoTiro/", 4),
+    private ArrayList<Image> curtoCircuito2 = carregarsprites("/chefes/chefe1/danificado2/",40), curtoCircuito = carregarsprites("/chefes/chefe1/danificado/", 39), framesDerrota = new ArrayList<>(), explosaoNave = carregarsprites("/nave/explosao/", 63), vidaNaveFrames = new ArrayList<>(), fundo = new ArrayList<>(), animacaoTiroNave = carregarsprites("/nave/animacaoTiro/", 4),
     animacaoTurbina = carregarsprites("/nave/turbina/", 6), acertoSprites = carregarsprites("/inimigo/acerto/", 15),
     explosaoInimigo = carregarsprites("/inimigo/explosao/", 10),fumaca = carregarsprites("/inimigo/fumaça/", 4),fumacaNaveSprites = carregarsprites("/nave/fumaça/", 45);
 
@@ -33,7 +33,7 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
     private ArrayList<Inimigo> inimigos = new ArrayList<>(), inimigosParaRemover = new ArrayList<>();
 
     @SuppressWarnings("unused") // //Só para tirar o  aviso que diz que pontos não está sendo usado ( Está sendo usada para sistema progressão)
-    private int indiceCurto = 0, indiceCurto2 = 0, indiceAnimacaoDerrota = 1, indiceFundo = 1,indiceExplosaoNave = 0, totalFrames = 251, indiceFumacaNave = 0, totalFramesVida = 300, numeroFrameAtualVidaNave = 1, indiceAnimacaoTiro, pontos = 0, indiceTurbina = 0;
+    private int indiceCurto = 0,indiceCurto3 = 0,indiceCurto4 = 0, indiceCurto2 = 0,indiceFumacaNave2 = 0, indiceAnimacaoDerrota = 1, indiceFundo = 1,indiceExplosaoNave = 0, totalFrames = 251, indiceFumacaNave = 0, totalFramesVida = 300, numeroFrameAtualVidaNave = 1, indiceAnimacaoTiro, pontos = 0, indiceTurbina = 0;
     private Image tiroNaveImagem = carregarSprite("/nave/tiro.png"), inimigoImg = carregarSprite("/inimigo/inimigo.png");
     private Chefe chefe = new Chefe("/chefes/chefe1/chefe.png", "/chefes/chefe1/tiroChefe1.png");
     private boolean 
@@ -259,6 +259,13 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
                 g.drawImage(acertoSprites.get(indiceCurto2), chefe.chefeX - 130, chefe.chefeY + 230, 150,150,null);
                 
             }
+
+            if(chefe.vidaaAsaDireita <= 0){
+                g.drawImage(curtoCircuito2.get(indiceCurto3), chefe.chefeX + 160, chefe.chefeY + 250,200, 200,null);
+                g.drawImage(fumacaNaveSprites.get(indiceFumacaNave2), chefe.chefeX + 120, chefe.chefeY + 230, 200,200,null);
+                g.drawImage(acertoSprites.get(indiceCurto4), chefe.chefeX + 130 , chefe.chefeY + 230, 150,150,null);
+                
+            }
         }
 
         if(!tirosNave.isEmpty()){
@@ -380,7 +387,7 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
     @Override
     public void actionPerformed(ActionEvent e) {
 
-        if(chefe.vidaAsaEsquerda <= 0 || chefe.vidaaAsaDireita <= 0){
+        if(chefe.vidaAsaEsquerda <= 0 ){
             if(indiceCurto < curtoCircuito.size() - 1){
                 indiceCurto ++;
             }else{
@@ -393,7 +400,28 @@ public class Jogo extends JPanel implements KeyListener,ActionListener, MouseLis
                 indiceCurto2 = 0;
             }
         }
-        
+
+        if(chefe.vidaaAsaDireita <= 0){
+
+            if(indiceCurto4 < acertoSprites.size() - 1){
+                indiceCurto4 ++;
+            }else{
+                indiceCurto4 = 2;
+            }
+
+            if(indiceCurto3 < curtoCircuito2.size() - 1){
+                indiceCurto3 ++;
+            }else{
+                indiceCurto3 = 3;
+            }
+
+            if(indiceFumacaNave2 < fumacaNaveSprites.size() - 1){
+                indiceFumacaNave2 ++;
+            }else{
+                indiceFumacaNave2 = 0;
+            }
+            
+        }
 
         if(somFundo.terminou() && nave.vida > 0){
             somFundo.setVolume(2.0f);
