@@ -80,22 +80,52 @@ public class Menu extends JPanel implements KeyListener,ActionListener{
     }
         
 
+   
     @Override
     public void keyPressed(KeyEvent e) {
         if(e.getKeyCode() == KeyEvent.VK_ENTER){
+            // Resetar estado do jogo
+            jogo.nave.vida = jogo.nave.vidaMaxima;
+            jogo.chefe.vida = 50;
+            jogo.chefe.vidaAsaEsquerda = 5;
+            jogo.chefe.vidaaAsaDireita = 10;
+            jogo.pontos = 0;
+            jogo.inimigos.clear();
+            jogo.tirosNave.clear();
+            jogo.buracosDBala.clear();
+            jogo.indiceSpritesExplosao = 0;
+            
+            // Resetar explosões e sons do chefe
+            jogo.podeTocarSomExplosaoCorpo = true;
+            jogo.podeTocarSomExplosaoAsaEsquerda = true;
+            jogo.podeTocarSomExplosaoAsaDireita = true;
+
+            jogo.podeExplodirAsaDireitaChefe = true;
+            jogo.podeExplodirAsaEsquerdaChefe = true;
+            jogo.podeExplodirCorpoChefe = true;
+
+            // Resetar música para a original
+            jogo.somFundo.parar();
+            jogo.somFundo = new Som("sons/fundo/fundo.wav");
+            jogo.somFundo.setVolume(2.0f);
+            jogo.somFundo.tocarLoop();
+
+            // Iniciar timers
             jogo.timerAnimacao.start();
             jogo.timerSpawnInimigo.start();
             jogo.timerTiro.start();
             jogo.timerGeral.start();
             jogo.timerCarregarFundo.start();
 
+            // Trocar para o painel do jogo
             janela.setContentPane(jogo);
             jogo.requestFocusInWindow();
             janela.revalidate();
             janela.repaint();
             timerGeral.stop();
-            
         }
+
+
         if(e.getKeyCode() == KeyEvent.VK_ESCAPE){
             System.exit(0);
         }

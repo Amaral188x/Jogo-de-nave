@@ -37,45 +37,37 @@ public class Chefe {
 
         // Corpo
         corpoNormal = new ImageIcon(
-                getClass().getResource("/chefes/chefe1/corpoNormal.png")
-        ).getImage();
+            getClass().getResource("/chefes/chefe1/corpoNormal.png")).getImage();
 
         corpoDanificado = new ImageIcon(
-                getClass().getResource("/chefes/chefe1/corpoDanificado.png")
-        ).getImage();
+            getClass().getResource("/chefes/chefe1/corpoDanificado.png")).getImage();
 
         // Asa direita
         asaDireitaNormal = new ImageIcon(
-                getClass().getResource("/chefes/chefe1/asaDireitaNormal.png")
-        ).getImage();
+            getClass().getResource("/chefes/chefe1/asaDireitaNormal.png")).getImage();
 
         asaDireitaDanificada = new ImageIcon(
-                getClass().getResource("/chefes/chefe1/asaDireitaDanificada.png")
-        ).getImage();
+            getClass().getResource("/chefes/chefe1/asaDireitaDanificada.png")).getImage();
 
         // Asa esquerda
         asaEsquerdaNormal = new ImageIcon(
-                getClass().getResource("/chefes/chefe1/asaEsquerdaNormal.png")
-        ).getImage();
+            getClass().getResource("/chefes/chefe1/asaEsquerdaNormal.png")).getImage();
 
         asaEsquerdaDanificada = new ImageIcon(
-                getClass().getResource("/chefes/chefe1/asaEsquerdaDanificada.png")
-        ).getImage();
+            getClass().getResource("/chefes/chefe1/asaEsquerdaDanificada.png")).getImage();
 
         // Tiro
         imgTiro = new ImageIcon(
-                getClass().getResource(caminhoTiroImg)
-        ).getImage();
+            getClass().getResource(caminhoTiroImg)).getImage();
 
         // Imagem para mostrar as áreas de colisão
         imgAreaDeColisão = new ImageIcon(
-                getClass().getResource("/chefes/chefe1/coli.jpg")
-        ).getImage();
+            getClass().getResource("/chefes/chefe1/coli.jpg")).getImage();
 
         tamX = 480;
         tamY = 480;
 
-        vida = 1000;
+        vida = 50;
         vel = 0;
 
         // Vida das asas
@@ -123,15 +115,13 @@ public class Chefe {
         // CORPO
         // =====================================================
 
-        if (vida > 100) {
+        if (vida > 49) {
 
-            g.drawImage(corpoNormal, chefeX - 150, chefeY, tamX, tamY, null
-            );
+            g.drawImage(corpoNormal, chefeX - 150, chefeY, tamX, tamY, null);
 
         } else {
 
-            g.drawImage( corpoDanificado, chefeX - 150, chefeY, tamX, tamY, null
-            );
+            g.drawImage( corpoDanificado, chefeX - 150, chefeY, tamX, tamY, null);
         }
 
 
