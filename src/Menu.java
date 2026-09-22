@@ -89,12 +89,12 @@ public class Menu extends JPanel implements KeyListener,ActionListener{
             jogo.chefe.vida = 50;
             jogo.chefe.vidaAsaEsquerda = 5;
             jogo.chefe.vidaaAsaDireita = 10;
-            jogo.pontos = 0;
+            jogo.pontos = 4;
             jogo.inimigos.clear();
             jogo.tirosNave.clear();
             jogo.buracosDBala.clear();
-            jogo.indiceSpritesExplosao = 0;
-            
+            jogo.tiroschefe.clear();
+
             // Resetar explosões e sons do chefe
             jogo.podeTocarSomExplosaoCorpo = true;
             jogo.podeTocarSomExplosaoAsaEsquerda = true;

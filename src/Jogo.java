@@ -1,3 +1,4 @@
+
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -16,729 +17,1264 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-public class Jogo extends JPanel implements KeyListener,ActionListener, MouseListener, MouseMotionListener {
+
+public class Jogo extends JPanel implements KeyListener, ActionListener, MouseListener, MouseMotionListener {
+
+    // =========================================================
+    // OBJETOS PRINCIPAIS
+    // =========================================================
+
     public Nave nave;
+    public Chefe chefe;
+
     private JFrame janela;
     private Menu menu;
-    public Timer timerGeral, timerTiro, timerAnimacao, timerSpawnInimigo, timerCarregarFundo;
 
-    public Som perdeu = new Som("sons/fundo/perdeu.wav"), somTiro = new Som("/sons/nave/tiro.wav"),somExplosaoNave = new Som("/nave/explosao.wav"), somFundo = new Som("sons/fundo/fundo.wav"),somExplosao = new Som("/sons/inimigo/explosaoDanificarChefe.wav");
+    // =========================================================
+    // TIMERS
+    // =========================================================
 
-    private ArrayList<Image> spritesExplosaoChefe = carregarsprites("/chefes/chefe1/danificarArmas/", 10), curtoCircuito2 = carregarsprites("/chefes/chefe1/danificado2/",40), curtoCircuito = carregarsprites("/chefes/chefe1/danificado/", 39), framesDerrota = new ArrayList<>(), explosaoNave = carregarsprites("/nave/explosao/", 63), vidaNaveFrames = new ArrayList<>(), fundo = new ArrayList<>(), animacaoTiroNave = carregarsprites("/nave/animacaoTiro/", 4),
-    animacaoTurbina = carregarsprites("/nave/turbina/", 6), acertoSprites = carregarsprites("/inimigo/acerto/", 15),
-    explosaoInimigo = carregarsprites("/inimigo/explosao/", 10),fumaca = carregarsprites("/inimigo/fumaça/", 4),fumacaNaveSprites = carregarsprites("/nave/fumaça/", 45);
+    public Timer timerGeral;
+    public Timer timerTiro;
+    public Timer timerAnimacao;
+    public Timer timerSpawnInimigo;
+    public Timer timerCarregarFundo;
+    public Timer timerTiroChefe;
+    // =========================================================
+    // SONS
+    // =========================================================
 
+    public Som perdeu = new Som("sons/fundo/perdeu.wav");
+    public Som somTiro = new Som("/sons/nave/tiro.wav");
+    public Som somExplosaoNave = new Som("/nave/explosao.wav");
+    public Som somFundo = new Som("sons/fundo/fundo.wav");
+    public Som somExplosao = new Som("/sons/inimigo/explosaoDanificarChefe.wav");
+    public Som atingido = new Som("/sons/nave/atingido.wav");
 
-    public ArrayList<Tiro> buracosDBala = new ArrayList<>(), tirosNave = new ArrayList<>(), tirosParaRemover = new ArrayList<>();
-    public ArrayList<Inimigo> inimigos = new ArrayList<>(), inimigosParaRemover = new ArrayList<>();
+    // =========================================================
+    // SPRITES
+    // =========================================================
+
+    private ArrayList<Image> spritesExplosaoChefe = carregarsprites("/chefes/chefe1/danificarArmas/", 10);
+
+    private ArrayList<Image> curtoCircuito2 =carregarsprites("/chefes/chefe1/danificado2/", 40);
+
+    private ArrayList<Image> curtoCircuito =carregarsprites("/chefes/chefe1/danificado/", 39);
+
+    private ArrayList<Image> framesDerrota =new ArrayList<>();
+
+    private ArrayList<Image> explosaoNave =carregarsprites("/nave/explosao/", 63);
+
+    private ArrayList<Image> vidaNaveFrames =new ArrayList<>();
+
+    private ArrayList<Image> fundo =new ArrayList<>();
+
+    private ArrayList<Image> animacaoTiroNave =carregarsprites("/nave/animacaoTiro/", 4);
+
+    private ArrayList<Image> animacaoTurbina =carregarsprites("/nave/turbina/", 6);
+
+    private ArrayList<Image> acertoSprites =carregarsprites("/inimigo/acerto/", 15);
+
+    private ArrayList<Image> explosaoInimigo =carregarsprites("/inimigo/explosao/", 10);
+
+    private ArrayList<Image> fumaca =carregarsprites("/inimigo/fumaça/", 4);
+
+    private ArrayList<Image> fumacaNaveSprites =carregarsprites("/nave/fumaça/", 45);
+
+    // =========================================================
+    // OBJETOS DO JOGO
+    // =========================================================
+
+    public ArrayList<Tiro> tirosNave = new ArrayList<>();
+    public ArrayList<Tiro> buracosDBala = new ArrayList<>();
+    private ArrayList<Tiro> tirosParaRemover = new ArrayList<>();
+    public ArrayList<Tiro> tiroschefe = new ArrayList<>();
+
+    public ArrayList<Inimigo> inimigos = new ArrayList<>();
+    private ArrayList<Inimigo> inimigosParaRemover = new ArrayList<>();
 
     private GridDebug malha = new GridDebug();
-    public int indiceCurto = 0,indiceCurto3 = 0,indiceCurto4 = 0, indiceSpritesExplosao = 0, indiceCurto2 = 0,indiceFumacaNave2 = 0, indiceAnimacaoDerrota = 1, indiceFundo = 1,indiceExplosaoNave = 0, totalFrames = 251, indiceFumacaNave = 0, totalFramesVida = 300, numeroFrameAtualVidaNave = 1, indiceAnimacaoTiro, pontos = 4, indiceTurbina = 0;
-    private Image tiroNaveImagem = carregarSprite("/nave/tiro.png"), inimigoImg = carregarSprite("/inimigo/inimigo.png");
-    public Chefe chefe = new Chefe("/chefes/chefe1/chefe.png", "/chefes/chefe1/tiroChefe1.png");
-    public boolean
 
-    podeTocarSomExplosaoCorpo = true, 
-    podeTocarSomExplosaoAsaEsquerda = true,
-    podeTocarSomExplosaoAsaDireita = true,
+    // =========================================================
+    // IMAGENS INDIVIDUAIS
+    // =========================================================
 
-    podeExplodirAsaDireitaChefe = true, 
-    podeExplodirAsaEsquerdaChefe = true, 
-    podeExplodirCorpoChefe = true,
-    
+    private Image tiroNaveImagem =carregarSprite("/nave/tiro.png");
 
-    //controles via teclado
-        ativarMouse = false, 
-        atirar = false, 
-        cima = false, 
-        baixo = false, 
-        esquerda = false, 
-        direita = false,
-        fumacaNave = false;
+    private Image inimigoImg =carregarSprite("/inimigo/inimigo.png");
+
+    // =========================================================
+    // ÍNDICES DAS ANIMAÇÕES
+    // =========================================================
+
+    private int indiceCurto = 0;
+    private int indiceCurto2 = 0;
+    private int indiceCurto3 = 0;
+    private int indiceCurto4 = 0;
+
+    private int indiceSpritesExplosao = 0;
+
+    private int indiceFumacaNave = 0;
+    private int indiceFumacaNave2 = 0;
+
+    private int indiceAnimacaoDerrota = 1;
+    private int indiceAnimacaoTiro = 0;
+    private int indiceTurbina = 0;
+
+    private int indiceFundo = 1;
+    private int indiceExplosaoNave = 0;
+
+    private int numeroFrameAtualVidaNave = 1;
+
+    // =========================================================
+    // CONFIGURAÇÕES DE ANIMAÇÃO
+    // =========================================================
+
+    private final int totalFrames = 251;
+    private final int totalFramesVida = 300;
+
+    // =========================================================
+    // PONTUAÇÃO
+    // =========================================================
+
+    public int pontos = 4;
+
+    // =========================================================
+    // CONTROLE DAS EXPLOSÕES DO CHEFE
+    // =========================================================
+
+    public boolean podeTocarSomExplosaoCorpo = true;
+    public boolean podeTocarSomExplosaoAsaEsquerda = true;
+    public boolean podeTocarSomExplosaoAsaDireita = true;
+
+    public boolean podeExplodirCorpoChefe = true;
+    public boolean podeExplodirAsaEsquerdaChefe = true;
+    public boolean podeExplodirAsaDireitaChefe = true;
+
+    public boolean desenharMalha = false, desenharMalhaNoChefe = false;
+
+    // =========================================================
+    // CONTROLES
+    // =========================================================
+
+    private boolean ativarMouse = false;
+    private boolean atirar = false;
+
+    private boolean cima = false;
+    private boolean baixo = false;
+    private boolean esquerda = false;
+    private boolean direita = false;
+
+    private boolean fumacaNave = false;
 
 
-    public Jogo(JFrame janela,Menu menu){
-        try{
+    // =========================================================
+    // CONSTRUTOR
+    // =========================================================
+
+    public Jogo(JFrame janela, Menu menu) {
+
+        try {
             this.janela = janela;
             this.menu = menu;
+
             setFocusable(true);
+
             addKeyListener(this);
             addMouseListener(this);
             addMouseMotionListener(this);
-            
-            
+
+            // =====================================================
+            // NAVE E CHEFE
+            // =====================================================
+
             nave = new Nave(new ImageIcon(getClass().getResource("/nave/nave.png")).getImage(),janela);
+
+            chefe = new Chefe("/chefes/chefe1/chefe.png","/chefes/chefe1/tiroChefe1.png");
+
+            // =====================================================
+            // MÚSICA
+            // =====================================================
+
             somFundo.setVolume(2.0f);
             somFundo.tocarLoop();
 
-            for (int i = 1; i <= 10; i++){
+            // =====================================================
+            // FUNDO
+            // =====================================================
+
+            for (int i = 1; i <= 10; i++) {
                 fundo.add(new ImageIcon(getClass().getResource("/jogo/fundo/(" + i + ").jpg")).getImage());
             }
 
-            for (int i = 1; i <= 10; i++){
-                fundo.add(new ImageIcon(getClass().getResource("/nave/vida_normal/("+ i +").png")).getImage());
-            }
-            
+            // =====================================================
+            // VIDA DA NAVE
+            // =====================================================
 
-            timerCarregarFundo = new Timer(5,new ActionListener() {
+            for (int i = 1; i <= 10; i++) {
+                fundo.add(new ImageIcon(getClass().getResource("/nave/vida_normal/(" + i + ").png")).getImage());
+            }
+
+
+            // =====================================================
+            // TIMER PARA CARREGAR IMAGENS
+            // =====================================================
+
+            timerCarregarFundo = new Timer(5, new ActionListener() {
+
                 @Override
-                public void actionPerformed(ActionEvent e){
-                    try{
-                        if(indiceFundo <= totalFrames){
-                            if(fundo.size() - 1 < 20){
-                                BufferedImage img = ImageIO.read(getClass().getResource("/jogo/fundo/(" + indiceFundo + ").jpg"));
+                public void actionPerformed(ActionEvent e) {
+
+                    try {
+
+                        // -------------------------------------------------
+                        // CARREGAR FUNDO
+                        // -------------------------------------------------
+
+                        if (indiceFundo <= totalFrames) {
+
+                            if (fundo.size() - 1 < 20) {
+
+                                BufferedImage img = ImageIO.read(getClass().getResource("/jogo/fundo/(" +indiceFundo +").jpg"));
+
                                 fundo.add(img);
-                                indiceFundo ++;
+                                indiceFundo++;
                             }
-                        }else{
-                            indiceFundo = 1;      
+
+                        } else {
+
+                            indiceFundo = 1;
                         }
 
-                        if(nave.vida <= 0 && indiceExplosaoNave >= explosaoNave.size() - 1){
-                            if(framesDerrota.size() < 20){
-                                if(indiceAnimacaoDerrota < 114){
-                                    BufferedImage img = ImageIO.read(getClass().getResource("/jogo/derrota/(" + indiceAnimacaoDerrota + ").png"));
+
+                        // -------------------------------------------------
+                        // CARREGAR DERROTA
+                        // -------------------------------------------------
+
+                        if (nave.vida <= 0 && indiceExplosaoNave >= explosaoNave.size() - 1) {
+
+                            if (framesDerrota.size() < 20) {
+
+                                if (indiceAnimacaoDerrota < 114) {
+
+                                    BufferedImage img =ImageIO.read(getClass().getResource("/jogo/derrota/(" +indiceAnimacaoDerrota +").png"));
+
                                     framesDerrota.add(img);
-                                    indiceAnimacaoDerrota ++;
-                                    if(indiceAnimacaoDerrota == 57){
+                                    indiceAnimacaoDerrota++;
+
+                                    if (indiceAnimacaoDerrota == 57) {
                                         perdeu.setVolume(2.0f);
-                                        perdeu.tocarSom(); 
+                                        perdeu.tocarSom();
                                     }
-                                }else{
-                                    
+
+                                } else {
+
                                     indiceAnimacaoDerrota = 1;
+
                                     timerGeral.stop();
                                     timerAnimacao.stop();
                                     timerSpawnInimigo.stop();
                                     timerTiro.stop();
                                     timerCarregarFundo.stop();
+
                                     somFundo.parar();
+
                                     pontos = 0;
                                     nave.vida = nave.vidaMaxima;
 
                                     inimigos.clear();
                                     inimigosParaRemover.clear();
+
                                     tirosNave.clear();
                                     tirosParaRemover.clear();
-                                    
+
                                     framesDerrota.clear();
 
                                     janela.setContentPane(menu);
+
                                     menu.timerGeral.start();
                                     menu.requestFocusInWindow();
+
                                     janela.revalidate();
                                     janela.repaint();
-                                   
-                                
                                 }
                             }
                         }
 
-                        if(numeroFrameAtualVidaNave < totalFramesVida){
-                            if(vidaNaveFrames.size() < 20 && nave.vida > (nave.vidaMaxima / 2)){
-                                BufferedImage img = ImageIO.read(getClass().getResource("/nave/vida_normal/(" + numeroFrameAtualVidaNave + ").png"));
-                                vidaNaveFrames.add(img);
-                                numeroFrameAtualVidaNave ++;
-                                
-                            }else if(vidaNaveFrames.size() < 20 && nave.vida <= nave.vidaMaxima /2 && nave.vida > 5 ){
-                                nave.naveImg = carregarSprite("/nave/nave_Danificada.png");
-                                fumacaNave = true;
-                                BufferedImage img = ImageIO.read(getClass().getResource("/nave/vida_metade/(" + numeroFrameAtualVidaNave + ").png"));
-                                vidaNaveFrames.add(img);
-                                numeroFrameAtualVidaNave ++;
 
-                            }else if(vidaNaveFrames.size() < 20 && nave.vida <= 5 ){
-                                BufferedImage img = ImageIO.read(getClass().getResource("/nave/vida_baixa/(" + numeroFrameAtualVidaNave + ").png"));
+                        // -------------------------------------------------
+                        // VIDA DA NAVE
+                        // -------------------------------------------------
+
+                        if (numeroFrameAtualVidaNave < totalFramesVida) {
+
+                            if (vidaNaveFrames.size() < 20 && nave.vida > nave.vidaMaxima / 2) {
+
+                                BufferedImage img = ImageIO.read(getClass().getResource("/nave/vida_normal/(" +numeroFrameAtualVidaNave +").png"));
+
                                 vidaNaveFrames.add(img);
-                                numeroFrameAtualVidaNave ++;
+                                numeroFrameAtualVidaNave++;
+
+                            } else if (vidaNaveFrames.size() < 20 &&nave.vida <= nave.vidaMaxima / 2 &&nave.vida > 5) {
+
+                                nave.naveImg =carregarSprite("/nave/nave_Danificada.png");
+
+                                fumacaNave = true;
+
+                                BufferedImage img = ImageIO.read(getClass().getResource("/nave/vida_metade/(" +numeroFrameAtualVidaNave +").png"));
+
+                                vidaNaveFrames.add(img);
+                                numeroFrameAtualVidaNave++;
+
+                            } else if (vidaNaveFrames.size() < 20 &&nave.vida <= 5) {
+
+                                BufferedImage img =ImageIO.read(getClass().getResource("/nave/vida_baixa/(" +numeroFrameAtualVidaNave +").png"));
+
+                                vidaNaveFrames.add(img);
+                                numeroFrameAtualVidaNave++;
                             }
-                        }else{
+
+                        } else {
                             numeroFrameAtualVidaNave = 1;
                         }
 
-                    }catch(Exception Err){
-                        System.out.println("ERRO AO CARREEGAR IMAGEM DO FUNDO! CÓDIGO DE ERRO: " + Err);
+                    } catch (Exception erro) {
+                        System.out.println("ERRO AO CARREGAR IMAGEM DO FUNDO! " +"CÓDIGO DE ERRO: " + erro);
                     }
                 }
             });
-            
 
-            //Timers==================================
-            timerGeral = new Timer( 16,this);
-            timerTiro = new Timer(200,new ActionListener(){
+
+            // =====================================================
+            // TIMER GERAL
+            // =====================================================
+
+            timerGeral = new Timer(16, this);
+
+
+            // =====================================================
+            // TIMER DE TIRO
+            // =====================================================
+
+            timerTiro = new Timer(200, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
 
-                    if(atirar){
+                    if (atirar) {
+
                         tirosNave.add(new Tiro(nave.x + 70,nave.y,tiroNaveImagem,acertoSprites));
-                        
+
                         somTiro.tocarSom();
                         somTiro.setVolume(0.5f);
                     }
                 }
             });
 
-            timerSpawnInimigo = new Timer(1000,new ActionListener(){
+            timerTiroChefe = new Timer(800,new ActionListener() {
+                @Override 
+                public void actionPerformed(ActionEvent e){
+                    tiroschefe.add(new Tiro(chefe.chefeX - 100, chefe.chefeY + 300, tiroNaveImagem, acertoSprites));
+                    tiroschefe.add(new Tiro(chefe.chefeX + 90, chefe.chefeY + 300, tiroNaveImagem, acertoSprites));
+                    tiroschefe.add(new Tiro(chefe.chefeX + 270, chefe.chefeY + 300, tiroNaveImagem, acertoSprites));
+                }  
+            });
+
+            // =====================================================
+            // TIMER DOS INIMIGOS
+            // =====================================================
+
+            timerSpawnInimigo = new Timer(1000, new ActionListener() {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     inimigos.add(new Inimigo(inimigoImg,explosaoInimigo,fumaca));
                 }
             });
-            
 
-            timerAnimacao = new Timer(50, new ActionListener(){
+
+            // =====================================================
+            // TIMER DAS ANIMAÇÕES
+            // =====================================================
+
+            timerAnimacao = new Timer(50, new ActionListener() {
+
                 @Override
-                public void actionPerformed(ActionEvent e){
-                    if(indiceAnimacaoTiro < animacaoTiroNave.size() - 1){
-                        indiceAnimacaoTiro ++;
-                    }else{
+                public void actionPerformed(ActionEvent e) {
+
+                    // Animação do tiro
+                    if (indiceAnimacaoTiro < animacaoTiroNave.size() - 1) {
+                        indiceAnimacaoTiro++;
+                    } else {
                         indiceAnimacaoTiro = 0;
                     }
 
-                    if(indiceTurbina < animacaoTurbina.size() - 1){
-                        indiceTurbina ++;
-                    }else{
+                    // Animação da turbina
+                    if (indiceTurbina < animacaoTurbina.size() - 1) {
+                        indiceTurbina++;
+                    } else {
                         indiceTurbina = 0;
                     }
 
-                    if(fumacaNave || chefe.vidaAsaEsquerda <= 0){
-                        if( indiceFumacaNave < fumacaNaveSprites.size() -1 ){
-                            indiceFumacaNave ++;
-                        }else{
+                    // Fumaça
+                    if (fumacaNave ||chefe.vidaAsaEsquerda <= 0) {
+                        if (indiceFumacaNave < fumacaNaveSprites.size() - 1) {
+                           indiceFumacaNave++;
+                        } else {
                             indiceFumacaNave = 0;
                         }
                     }
                 }
             });
 
-            //========================================
-
-        }catch(Exception Err){
-            System.out.print("ERRO NO CONSTRUTOR DA CLASSE JOGO! CÓDIGO DE ERRO: " + Err);
+        } catch (Exception erro) {
+            System.out.println("ERRO NO CONSTRUTOR DA CLASSE JOGO! " +"CÓDIGO DE ERRO: " + erro);
         }
-        }
-    
+    }
 
-   
-   //Desenhar coisas=========================================================
+
+    // =========================================================
+    // DESENHAR
+    // =========================================================
+
     @Override
-    public void paintComponent(Graphics g){
+    public void paintComponent(Graphics g) {
+
         super.paintComponent(g);
-        if(!fundo.isEmpty() && fundo.size() >= 2){
+
+        // =====================================================
+        // FUNDO
+        // =====================================================
+
+        if (!fundo.isEmpty() && fundo.size() >= 2) {
+
             g.drawImage(fundo.get(1),0,0,getWidth(),getHeight(),null);
-            if(fundo.size() >= 3){
+
+            if (fundo.size() >= 3) {
                 fundo.remove(0);
             }
         }
 
-        if(vidaNaveFrames.size() >= 2 ){
-            g.drawImage(vidaNaveFrames.get(1), 20,20, 200,100, null);
-            if(vidaNaveFrames.size() >= 3){
+
+        // =====================================================
+        // VIDA DA NAVE
+        // =====================================================
+
+        if (vidaNaveFrames.size() >= 2) {
+
+            g.drawImage(vidaNaveFrames.get(1),20,20,200,100,null);
+
+            if (vidaNaveFrames.size() >= 3) {
                 vidaNaveFrames.remove(0);
             }
         }
-        
-        if(atirar){
-            if(animacaoTiroNave != null){
-                g.drawImage(animacaoTiroNave.get(indiceAnimacaoTiro), nave.x + 60,nave.y,32,32,null);
+
+
+        // =====================================================
+        // TIRO DA NAVE
+        // =====================================================
+
+        if (atirar) {
+            g.drawImage(animacaoTiroNave.get(indiceAnimacaoTiro),nave.x + 60,nave.y,32,32,null);
+
+        }
+
+
+        // =====================================================
+        // INIMIGOS
+        // =====================================================
+
+        for (Inimigo inimigo : inimigos) {
+            inimigo.desenhar(g);
+        }
+
+
+        // =====================================================
+        // TURBINA
+        // =====================================================
+
+        if (!animacaoTurbina.isEmpty() && nave.vida > 0) {
+            g.drawImage(animacaoTurbina.get(indiceTurbina),nave.x + 42,nave.y + 110,64,64,null);
+        }
+
+
+        // =====================================================
+        // EXPLOSÃO DA NAVE
+        // =====================================================
+
+        if (nave.vida <= 0) {
+            g.drawImage(explosaoNave.get(indiceExplosaoNave),nave.x,nave.y,256,256,null);
+        }
+
+
+       
+
+       
+
+        // =====================================================
+        // CHEFE
+        // =====================================================
+
+        if (pontos >= 5) {
+            // =====================================================
+            // TIROS CHEFE
+            // =====================================================
+
+            if(!tiroschefe.isEmpty()){
+                for(Tiro tiro : tiroschefe){
+                    tiro.desenharTiro(g);
+                }
+
             }
-        }
-
-        if(!inimigos.isEmpty()){
-            for(Inimigo inimigo : inimigos){
-                inimigo.desenhar(g);
-            }
-        }
-        
-        if(!animacaoTurbina.isEmpty() && nave.vida > 0){
-            g.drawImage(animacaoTurbina.get(indiceTurbina), nave.x + 42, nave.y + 110,64,64,null);
-        }
-
-
-        if(nave.vida <= 0){
-            g.drawImage(explosaoNave.get(indiceExplosaoNave), nave.x, nave.y, 256, 256,null);
-        }
-
-        //Serve apenas para desenhar uma malha quadriculada do tamanho da janela para facilitar o posicionamento de elementos gráficos
-        boolean desenharMalha = true;
-        if(desenharMalha){
-            malha.desenhar(g,getWidth(), getHeight(), 60 );
-        }
-        if(pontos >= 5){
             chefe.desenharchefe1(g);
-            if(chefe.vidaAsaEsquerda <= 0){
-                g.drawImage(curtoCircuito.get(indiceCurto), chefe.chefeX - 180, chefe.chefeY + 270,150, 150,null);
-                g.drawImage(fumacaNaveSprites.get(indiceFumacaNave), chefe.chefeX - 120, chefe.chefeY + 230, 150,150,null);
-                g.drawImage(acertoSprites.get(indiceCurto2), chefe.chefeX - 130, chefe.chefeY + 230, 150,150,null);
-                
+
+            // =====================================================
+            // MALHA
+            // =====================================================
+            
+            if(desenharMalha){
+                malha.desenharNoChefe(g, chefe, 50);
+            }
+            if (desenharMalhaNoChefe){
+                malha.desenhar(g,getWidth(), getHeight(), 50);
             }
 
-            if(chefe.vidaaAsaDireita <= 0){
-                g.drawImage(curtoCircuito2.get(indiceCurto3), chefe.chefeX + 160, chefe.chefeY + 250,200, 200,null);
-                g.drawImage(fumacaNaveSprites.get(indiceFumacaNave2), chefe.chefeX + 120, chefe.chefeY + 230, 200,200,null);
-                g.drawImage(acertoSprites.get(indiceCurto4), chefe.chefeX + 130 , chefe.chefeY + 230, 150,150,null);
-                
+
+            // Asa esquerda destruída
+            if (chefe.vidaAsaEsquerda <= 0) {
+
+                g.drawImage(curtoCircuito.get(indiceCurto),chefe.chefeX - 180,chefe.chefeY + 270,150,150,null);
+
+                g.drawImage(fumacaNaveSprites.get(indiceFumacaNave),chefe.chefeX - 120,chefe.chefeY + 230,150,150,null);
+
+                g.drawImage(acertoSprites.get(indiceCurto2),chefe.chefeX - 130,chefe.chefeY + 230,150,150,null);
             }
 
-            if(chefe.vida < 50){
-                g.drawImage(curtoCircuito2.get(indiceCurto3), chefe.chefeX - 10, chefe.chefeY + 300 ,200, 200,null);
-                g.drawImage(fumacaNaveSprites.get(indiceFumacaNave2), chefe.chefeX + 10, chefe.chefeY + 270, 200,200,null);
-                g.drawImage(curtoCircuito.get(indiceCurto), chefe.chefeX - 30 , chefe.chefeY + 240,150, 150,null);
+
+            // Asa direita destruída
+            if (chefe.vidaaAsaDireita <= 0) {
+
+                g.drawImage(curtoCircuito2.get(indiceCurto3),chefe.chefeX + 160,chefe.chefeY + 250,200,200,null);
+
+                g.drawImage(fumacaNaveSprites.get(indiceFumacaNave2),chefe.chefeX + 120,chefe.chefeY + 230,200,200,null);
+
+                g.drawImage(acertoSprites.get(indiceCurto4),chefe.chefeX + 130,chefe.chefeY + 230,150,150,null);
             }
 
-            if(chefe.vidaAsaEsquerda <= 0 && podeExplodirAsaEsquerdaChefe){
-                g.drawImage(spritesExplosaoChefe.get(indiceSpritesExplosao), chefe.chefeX - 365, chefe.chefeY + 120, 500, 500,null);
+
+            // Corpo danificado
+            if (chefe.vida < 50) {
+
+                g.drawImage(curtoCircuito2.get(indiceCurto3),chefe.chefeX - 10,chefe.chefeY + 300,200,200,null);
+
+                g.drawImage(fumacaNaveSprites.get(indiceFumacaNave2),chefe.chefeX + 10,chefe.chefeY + 270,200,200,null);
+
+                g.drawImage(curtoCircuito.get(indiceCurto),chefe.chefeX - 30,chefe.chefeY + 240,150,150,null);
             }
 
-            if(chefe.vidaaAsaDireita <= 0 && podeExplodirAsaDireitaChefe){
-                g.drawImage(spritesExplosaoChefe.get(indiceSpritesExplosao), chefe.chefeX + 0, chefe.chefeY + 120, 500, 500,null);
+
+            // Explosão da asa esquerda
+            if (chefe.vidaAsaEsquerda <= 0 && podeExplodirAsaEsquerdaChefe) {
+
+                g.drawImage(spritesExplosaoChefe.get(indiceSpritesExplosao),chefe.chefeX - 365,chefe.chefeY + 120,500,500,null);
             }
 
-            if(chefe.vida < 50 && podeExplodirCorpoChefe){
-                g.drawImage(spritesExplosaoChefe.get(indiceSpritesExplosao), chefe.chefeX - 200, chefe.chefeY , 500, 500,null);
 
+            // Explosão da asa direita
+            if (chefe.vidaaAsaDireita <= 0 &&podeExplodirAsaDireitaChefe) {
+
+                g.drawImage(spritesExplosaoChefe.get(indiceSpritesExplosao), chefe.chefeX,chefe.chefeY + 120, 500, 500, null);
+            }
+
+
+            // Explosão do corpo
+            if (chefe.vida < 50 && podeExplodirCorpoChefe) {
+
+                g.drawImage( spritesExplosaoChefe.get(indiceSpritesExplosao), chefe.chefeX - 200, chefe.chefeY,500, 500, null);
             }
         }
 
-        if(!tirosNave.isEmpty()){
-            for(Tiro tiro : tirosNave){
-                tiro.desenharTiro(g);    
-            }
+        // =====================================================
+        // TIROS DA NAVE
+        // =====================================================
+
+        for (Tiro tiro : tirosNave) {
+            tiro.desenharTiro(g);
         }
 
-        if(!buracosDBala.isEmpty()){
-            for(Tiro tiro : buracosDBala){
-                tiro.x += chefe.vel;
-                g.drawImage(new ImageIcon(getClass().getResource("/nave/marca de tiro.png")).getImage(),tiro.x, tiro.y, 20,20, null);
-            }
+
+        // =====================================================
+        // MARCAS DE TIRO NO CHEFE
+        // =====================================================
+
+        for (Tiro tiro : buracosDBala) {
+
+            tiro.x += chefe.vel;
+
+            g.drawImage(new ImageIcon(getClass().getResource("/nave/marca de tiro.png")).getImage(), tiro.x, tiro.y, 20, 20, null);
         }
+
+        
+       
+        // =====================================================
+        // NAVE
+        // =====================================================
 
         nave.desenharNave(g);
-        if(fumacaNave && nave.vida <= nave.vidaMaxima / 2 && nave.vida > 0){
-            g.drawImage(fumacaNaveSprites.get(indiceFumacaNave), nave.x + 10, nave.y + 35, 200,200,null);
+
+
+
+        if (fumacaNave && nave.vida <= nave.vidaMaxima / 2 && nave.vida > 0) {
+
+            g.drawImage( fumacaNaveSprites.get(indiceFumacaNave), nave.x + 10, nave.y + 35, 200, 200, null );
         }
 
-        g.setFont(new java.awt.Font("Arial", java.awt.Font.BOLD, 24));
+
+        // =====================================================
+        // TEXTOS
+        // =====================================================
+
+        g.setFont(new java.awt.Font( "Arial", java.awt.Font.BOLD, 24));
+
         g.setColor(java.awt.Color.RED);
+
         g.drawString("LIFE: ", 10, 30);
-        g.drawString("vida asas: " + chefe.vidaAsaEsquerda + " " + chefe.vidaaAsaDireita, 10, 200);
-        g.drawString("vida corpo " + chefe.vida,  10, 370);
+
+        g.drawString( "vida asas: " + chefe.vidaAsaEsquerda + " " + chefe.vidaaAsaDireita, 10, 200);
+
+        g.drawString("vida corpo " + chefe.vida,10,370);
 
         g.setColor(java.awt.Color.GREEN);
+
         g.drawString("SCORE: " + pontos, 10, 150);
 
-        if(!framesDerrota.isEmpty() && framesDerrota.size() >= 3 && nave.vida <= 0){
-            g.drawImage(framesDerrota.get(1), 0, 0, getWidth(), getHeight(), null);
-            if(framesDerrota.size() >= 4){
+
+        // =====================================================
+        // TELA DE DERROTA
+        // =====================================================
+
+        if (!framesDerrota.isEmpty() && framesDerrota.size() >= 3 && nave.vida <= 0) {
+
+            g.drawImage( framesDerrota.get(1), 0, 0, getWidth(), getHeight(), null);
+
+            if (framesDerrota.size() >= 4) {
                 framesDerrota.remove(0);
             }
         }
-    }
-    //========================================================================
 
-    //Teclado=================================================================
+    }
+
+
+    // =========================================================
+    // TECLADO
+    // =========================================================
+
     @Override
     public void keyTyped(KeyEvent e) {
-        
     }
-    
+
 
     @Override
     public void keyPressed(KeyEvent e) {
 
-        if(e.getKeyCode() == KeyEvent.VK_ESCAPE){
-           timerGeral.stop();
-           timerAnimacao.stop();
-           timerSpawnInimigo.stop();
-           timerTiro.stop();
-           timerCarregarFundo.stop();
-           somFundo.parar();
-           buracosDBala.clear();
-           inimigos.clear();
-           inimigosParaRemover.clear();
-           tirosNave.clear();
-           tirosParaRemover.clear();
+        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 
-           podeTocarSomExplosaoAsaDireita = true;
-           podeExplodirAsaEsquerdaChefe = true;
-           podeTocarSomExplosaoCorpo = true;
+            timerGeral.stop();
+            timerAnimacao.stop();
+            timerSpawnInimigo.stop();
+            timerTiro.stop();
+            timerCarregarFundo.stop();
+            timerTiroChefe.stop();
+
+            somFundo.parar();
+
+            buracosDBala.clear();
+            inimigos.clear();
+            inimigosParaRemover.clear();
+            tirosNave.clear();
+            tirosParaRemover.clear();
+
+            // Resetar explosões
+            podeTocarSomExplosaoAsaDireita = true;
+            podeTocarSomExplosaoAsaEsquerda = true;
+            podeTocarSomExplosaoCorpo = true;
+
+            podeExplodirAsaDireitaChefe = true;
+            podeExplodirAsaEsquerdaChefe = true;
+            podeExplodirCorpoChefe = true;
 
             janela.setContentPane(menu);
+
             menu.timerGeral.start();
             menu.requestFocusInWindow();
+
             janela.revalidate();
             janela.repaint();
         }
 
-        if(e.getKeyCode() == KeyEvent.VK_M){
+
+        if (e.getKeyCode() == KeyEvent.VK_M) {
             ativarMouse = !ativarMouse;
         }
 
-        if(e.getKeyCode() == KeyEvent.VK_SPACE && nave.vida > 0){
+
+        if (e.getKeyCode() == KeyEvent.VK_SPACE &&
+                nave.vida > 0) {
+
             atirar = true;
         }
 
-        if(e.getKeyCode() == KeyEvent.VK_A){
+
+        if (e.getKeyCode() == KeyEvent.VK_A) {
             esquerda = true;
         }
-        if(e.getKeyCode() == KeyEvent.VK_D){
+
+        if (e.getKeyCode() == KeyEvent.VK_D) {
             direita = true;
         }
-        if(e.getKeyCode() == KeyEvent.VK_W){
+
+        if (e.getKeyCode() == KeyEvent.VK_W) {
             cima = true;
         }
-        if(e.getKeyCode() == KeyEvent.VK_S){
+
+        if (e.getKeyCode() == KeyEvent.VK_S) {
             baixo = true;
         }
-      
+        if(e.getKeyCode() == KeyEvent.VK_1){
+            desenharMalha = !desenharMalha;
+        }
+        if(e.getKeyCode() == KeyEvent.VK_2){
+            desenharMalhaNoChefe = !desenharMalhaNoChefe;
+        }
     }
+
 
     @Override
     public void keyReleased(KeyEvent e) {
 
-        if(e.getKeyCode() == KeyEvent.VK_SPACE){
+        if (e.getKeyCode() == KeyEvent.VK_SPACE) {
             atirar = false;
         }
 
-        if(e.getKeyCode() == KeyEvent.VK_A){
+        if (e.getKeyCode() == KeyEvent.VK_A) {
             esquerda = false;
         }
-        if(e.getKeyCode() == KeyEvent.VK_D){
+
+        if (e.getKeyCode() == KeyEvent.VK_D) {
             direita = false;
         }
-        if(e.getKeyCode() == KeyEvent.VK_W){
+
+        if (e.getKeyCode() == KeyEvent.VK_W) {
             cima = false;
         }
-        if(e.getKeyCode() == KeyEvent.VK_S){
+
+        if (e.getKeyCode() == KeyEvent.VK_S) {
             baixo = false;
         }
-
     }
-    //==================================================================================== 
 
 
-    
-    //Atualizar variáveis e fazer outras coisas===========================================
+    // =========================================================
+    // ATUALIZAÇÃO DO JOGO
+    // =========================================================
+
     @Override
-    public void actionPerformed(ActionEvent e) {      
+    public void actionPerformed(ActionEvent e) {
+
         somExplosao.setVolume(2.0f);
-        if(chefe.vidaAsaEsquerda <= 0 && podeExplodirAsaEsquerdaChefe){
-            if(podeTocarSomExplosaoAsaEsquerda){
+
+
+        // =====================================================
+        // EXPLOSÃO DA ASA ESQUERDA
+        // =====================================================
+
+        if (chefe.vidaAsaEsquerda <= 0 && podeExplodirAsaEsquerdaChefe) {
+
+            if (podeTocarSomExplosaoAsaEsquerda) {
                 somExplosao.tocarSom();
                 podeTocarSomExplosaoAsaEsquerda = false;
             }
-            if(indiceSpritesExplosao < spritesExplosaoChefe.size() - 1){
-                indiceSpritesExplosao ++;
-            }else{
+
+            if (indiceSpritesExplosao < spritesExplosaoChefe.size() - 1) {
+
+                indiceSpritesExplosao++;
+            } else {
                 indiceSpritesExplosao = 0;
                 podeExplodirAsaEsquerdaChefe = false;
             }
         }
 
-        if(podeExplodirAsaDireitaChefe && chefe.vidaaAsaDireita <= 0 ){
-            if(podeTocarSomExplosaoAsaDireita){
+
+        // =====================================================
+        // EXPLOSÃO DA ASA DIREITA
+        // =====================================================
+
+        if (podeExplodirAsaDireitaChefe && chefe.vidaaAsaDireita <= 0) {
+
+            if (podeTocarSomExplosaoAsaDireita) {
+
                 somExplosao.tocarSom();
                 podeTocarSomExplosaoAsaDireita = false;
             }
-            if(indiceSpritesExplosao < spritesExplosaoChefe.size() - 1){
-                indiceSpritesExplosao ++;
-            }else{
+
+            if (indiceSpritesExplosao < spritesExplosaoChefe.size() - 1) {
+
+                indiceSpritesExplosao++;
+
+            } else {
+
                 indiceSpritesExplosao = 0;
                 podeExplodirAsaDireitaChefe = false;
             }
         }
 
-        if(podeExplodirCorpoChefe && chefe.vida < 50){
-            if(podeTocarSomExplosaoCorpo){
+
+        // =====================================================
+        // EXPLOSÃO DO CORPO
+        // =====================================================
+
+        if (podeExplodirCorpoChefe && chefe.vida < 50) {
+
+            if (podeTocarSomExplosaoCorpo) {
+
                 somExplosao.tocarSom();
                 podeTocarSomExplosaoCorpo = false;
             }
-            if(indiceSpritesExplosao < spritesExplosaoChefe.size() - 1){
-                indiceSpritesExplosao ++;
-            }else{
+
+            if (indiceSpritesExplosao < spritesExplosaoChefe.size() - 1) {
+                indiceSpritesExplosao++;
+
+            } else {
+
                 indiceSpritesExplosao = 0;
                 podeExplodirCorpoChefe = false;
             }
         }
 
-        if(chefe.vidaAsaEsquerda <= 0 || chefe.vida < 50 ){
-            if(indiceCurto < curtoCircuito.size() - 1){
-                indiceCurto ++;
-            }else{
+
+        // =====================================================
+        // CURTO-CIRCUITO ASA ESQUERDA / CORPO
+        // =====================================================
+
+        if (chefe.vidaAsaEsquerda <= 0 || chefe.vida < 50) {
+
+            if (indiceCurto < curtoCircuito.size() - 1) {
+                indiceCurto++;
+
+            } else {
                 indiceCurto = 0;
             }
 
-            if(indiceCurto2 < acertoSprites.size() - 1){
-                indiceCurto2 ++;
-            }else{
+
+            if (indiceCurto2 < acertoSprites.size() - 1) {
+                indiceCurto2++;
+
+            } else {
                 indiceCurto2 = 0;
             }
         }
 
-        if(chefe.vidaaAsaDireita <= 0 || chefe.vida < 50){
 
-            if(indiceCurto4 < acertoSprites.size() - 1){
-                indiceCurto4 ++;
-            }else{
+        // =====================================================
+        // CURTO-CIRCUITO ASA DIREITA / CORPO
+        // =====================================================
+
+        if (chefe.vidaaAsaDireita <= 0 || chefe.vida < 50) {
+
+            if (indiceCurto4 < acertoSprites.size() - 1) {
+                indiceCurto4++;
+
+            } else {
+
                 indiceCurto4 = 2;
             }
 
-            if(indiceCurto3 < curtoCircuito2.size() - 1){
-                indiceCurto3 ++;
-            }else{
+
+            if (indiceCurto3 < curtoCircuito2.size() - 1) {
+                indiceCurto3++;
+
+            } else {
                 indiceCurto3 = 3;
             }
 
-            if(indiceFumacaNave2 < fumacaNaveSprites.size() - 1){
-                indiceFumacaNave2 ++;
-            }else{
+
+            if (indiceFumacaNave2 < fumacaNaveSprites.size() - 1) {
+                indiceFumacaNave2++;
+
+            } else {
                 indiceFumacaNave2 = 0;
             }
-            
         }
 
-        if(somFundo.terminou() && nave.vida > 0){
+
+        // =====================================================
+        // MÚSICA
+        // =====================================================
+
+        if (somFundo.terminou() && nave.vida > 0) {
             somFundo.setVolume(2.0f);
             somFundo.tocarLoop();
-        }else if(nave.vida <= 0){
+
+        } else if (nave.vida <= 0) {
             somFundo.parar();
         }
 
-        if(nave.vida <= 0){
-            
-            if(indiceExplosaoNave < explosaoNave.size() - 1){
-                indiceExplosaoNave ++;
-                if(indiceExplosaoNave == 1){
+
+        // =====================================================
+        // EXPLOSÃO DA NAVE
+        // =====================================================
+
+        if (nave.vida <= 0) {
+
+            if (indiceExplosaoNave < explosaoNave.size() - 1) {
+                indiceExplosaoNave++;
+
+                if (indiceExplosaoNave == 1) {
                     somExplosaoNave.setVolume(2.0f);
                     somExplosaoNave.tocarSom();
                 }
-                nave.naveImg = carregarSprite("/nave/explosao/(1).png");
-            }else{
+
+                nave.naveImg = carregarSprite( "/nave/explosao/(1).png" );
+
+            } else {
                 indiceExplosaoNave = explosaoNave.size() - 1;
             }
-        }else{
-            if(nave.vida > nave.vidaMaxima / 2){
+
+        } else {
+
+            if (nave.vida > nave.vidaMaxima / 2) {
+
                 indiceExplosaoNave = 0;
-                nave.naveImg = carregarSprite("/nave/nave.png");
-            }else{
-                nave.naveImg = carregarSprite("/nave/nave_Danificada.png");
+
+                nave.naveImg = carregarSprite( "/nave/nave.png");
+
+            } else {
+
+                nave.naveImg = carregarSprite( "/nave/nave_Danificada.png");
             }
         }
 
 
-        if(inimigos != null){
-            for(Inimigo inimigo : inimigos){
-                inimigo.y += inimigo.vel;
+        // =====================================================
+        // INIMIGOS
+        // =====================================================
 
-                if(inimigo.getBounds().intersects(nave.getbounds()) & inimigo.podeColidir && nave.vida > 0){
-                       
-                        inimigo.vida = 0;
-                        nave.vida -= 2;
-                    }
+        for (Inimigo inimigo : inimigos) {
 
-                if(inimigo.podeExcluir){
-                    inimigosParaRemover.add(inimigo);
-                    pontos ++;
-                }
+            inimigo.y += inimigo.vel;
 
-                for(Tiro tiro : tirosNave){
-                    if(tiro.getBounds().intersects(inimigo.getBounds()) & inimigo.podeColidir){
-                        if(tiro.podeCausarDano){
-                            inimigo.vida --;
-                            tiro.podeCausarDano = false;
-                        }
-                        
-                        if(tiro.podeExcluir){
-                            tirosParaRemover.add(tiro);
-                        }
 
-                        tiro.desenharAcerto = true;
-                        tiro.vel = -inimigo.vel;
-                    }
-                }
-            }
-        }
-        if(pontos >= 5){
-            if(pontos == 5){
-                somFundo.parar();
-                somFundo = new Som("/sons/fundo/fundochefe1.wav");
-                somFundo.tocarLoop();
-                pontos ++;
+            if (inimigo.getBounds().intersects(nave.getbounds()) && inimigo.podeColidir && nave.vida > 0) {
+
+                inimigo.vida = 0;
+                nave.vida -= 2;
             }
 
-            for(Tiro tiro : tirosNave){
-                timerSpawnInimigo.stop();
-                if (tiro.getBounds().intersects(chefe.getBounds()) ) {
-                    chefe.vida -= 3;
-                    chefe.areaColisãoCorpo -= 5;
-                    if (chefe.areaColisãoCorpo <= 20){
-                        chefe.areaColisãoCorpo = 110;
-                    }
-                    tiro.desenharAcerto = true;
-                    tiro.podeCausarDano = false;
-                    buracosDBala.add(tiro);
-                    tiro.vel = -chefe.vel;
-                    if(tiro.podeExcluir){
-                        tirosParaRemover.add(tiro);
-                    }
-                }
 
-                if (tiro.getBounds().intersects(chefe.getBoundsAsaDireitaCorpo()) || tiro.getBounds().intersects(chefe.getBoundsAsaEsquerdaCorpo()) && tiro.podeCausarDano){
-                    if (chefe.areaColisaoAsasCorpo <= 6){
-                        chefe.areaColisaoAsasCorpo = 50;
-                    }
-                    chefe.areaColisaoAsasCorpo -= 5;
-                    chefe.vida-= 3;
-                    chefe.vidaaAsaDireita -= 1;
-                    tiro.desenharAcerto = true;
-                    tiro.podeCausarDano = false;
-                    tiro.vel = 0;  
-                    buracosDBala.add(tiro);
-                    if(tiro.podeExcluir){
-                        tirosParaRemover.add(tiro);
-                    }
-                }
+            if (inimigo.podeExcluir) {
+                inimigosParaRemover.add(inimigo);
+                pontos++;
+            }
 
-                if ( tiro.getBounds().intersects(chefe.getBoundsAsaDireira2()) || tiro.getBounds().intersects(chefe.getBoundsAsaDireita3()) || tiro.getBounds().intersects(chefe.getBoundsAsaDireita4()) || tiro.getBounds().intersects(chefe.getBoundsAsaDireita5()) && tiro.podeCausarDano){
-                        chefe.areaColisaoAsaDireita -= 5;
-                        if (chefe.areaColisaoAsaDireita <= 6){
-                            chefe.areaColisaoAsaDireita = 50;
-                        }
 
-                        chefe.vida -= 1;
-                        chefe.vidaaAsaDireita -= 1;
-                        tiro.desenharAcerto = true;
+            for (Tiro tiro : tirosNave) {
+
+                if (tiro.getBounds().intersects(inimigo.getBounds()) && inimigo.podeColidir) {
+
+                    if (tiro.podeCausarDano) {
+                        inimigo.vida--;
                         tiro.podeCausarDano = false;
-                        tiro.vel = -chefe.vel;
-                        buracosDBala.add(tiro);
-                        if(tiro.podeExcluir){
-                            tirosParaRemover.add(tiro);
-                        }
-                    }
-                
-                if (tiro.getBounds().intersects(chefe.getBoundsAsaEsquerda2()) || tiro.getBounds().intersects(chefe.getBoundsAsaEsquerda3()) || tiro.getBounds().intersects(chefe.getBoundsAsaEsquerda4()) || tiro.getBounds().intersects(chefe.getBoundsAsaEsquerda5()) && tiro.podeCausarDano){
-                    chefe.areaColisaoAsaEsquerda -= 5;
-                    if (chefe.areaColisaoAsaEsquerda <= 6){
-                        chefe.areaColisaoAsaEsquerda = 50;
                     }
 
-                    chefe.vidaAsaEsquerda -= 1;
-                    tiro.desenharAcerto = true;
-                    tiro.podeCausarDano = false;
-                    tiro.vel = -chefe.vel;
-                    buracosDBala.add(tiro);
-                    if(tiro.podeExcluir){
+                    if (tiro.podeExcluir) {
                         tirosParaRemover.add(tiro);
                     }
+
+                    tiro.desenharAcerto = true;
+                    tiro.vel = -inimigo.vel;
                 }
             }
         }
-            
-        
-        if(buracosDBala.size() >= 40){
-            buracosDBala.remove(0);
-        }
-        inimigos.removeAll(inimigosParaRemover);
-        inimigosParaRemover.clear();
 
-        if(tirosNave != null){
-            for(Tiro tiro : tirosNave){
-                tiro.y -= tiro.vel;
+
+        // =====================================================
+        // CHEFE
+        // =====================================================
+
+        if (pontos >= 5) {
+            timerTiroChefe.start();
+
+            for(Tiro tiro : tiroschefe){
+                tiro.y += 20;
+                if(tiro.y > 1100){
+                    tirosParaRemover.add(tiro);
+                }
+
+                if(tiro.getBounds().intersects(nave.getbounds()) && nave.vida > 0){
+                    atingido.tocarSom();
+                    nave.vida -= 1;
+                    tiro.desenharAcerto = true;
+                    tiro.podeCausarDano = false;
+                }
+
                 if(tiro.podeExcluir){
                     tirosParaRemover.add(tiro);
                 }
             }
-            
+
+            if (pontos == 5) {
+
+                somFundo.parar();
+
+                somFundo = new Som("/sons/fundo/fundochefe1.wav");
+
+                somFundo.tocarLoop();
+
+                pontos++;
+            }
+
+
+            for (Tiro tiro : tirosNave) {
+
+                timerSpawnInimigo.stop();
+
+
+                // ---------------------------------------------
+                // CORPO
+                // ---------------------------------------------
+
+                if (tiro.getBounds().intersects(chefe.getBounds())) {
+
+                    chefe.vida -= 3;
+                    chefe.areaColisãoCorpo -= 5;
+
+                    if (chefe.areaColisãoCorpo <= 20) {
+                        chefe.areaColisãoCorpo = 110;
+                    }
+
+                    tiro.desenharAcerto = true;
+                    tiro.podeCausarDano = false;
+
+                    buracosDBala.add(tiro);
+
+                    tiro.vel = -chefe.vel;
+
+                    if (tiro.podeExcluir) {
+                        tirosParaRemover.add(tiro);
+                    }
+                }
+
+
+                // ---------------------------------------------
+                // ASA / CORPO
+                // ---------------------------------------------
+
+                if (tiro.getBounds().intersects(chefe.getBoundsAsaDireitaCorpo()) || tiro.getBounds().intersects(chefe.getBoundsAsaEsquerdaCorpo()) && tiro.podeCausarDano) {
+
+                    if (chefe.areaColisaoAsasCorpo <= 6) {
+                        chefe.areaColisaoAsasCorpo = 50;
+                    }
+
+                    chefe.areaColisaoAsasCorpo -= 5;
+                    chefe.vida -= 3;
+                    chefe.vidaaAsaDireita--;
+
+                    tiro.desenharAcerto = true;
+                    tiro.podeCausarDano = false;
+                    tiro.vel = 0;
+
+                    buracosDBala.add(tiro);
+
+                    if (tiro.podeExcluir) {
+                        tirosParaRemover.add(tiro);
+                    }
+                }
+
+
+                // ---------------------------------------------
+                // ASA DIREITA
+                // ---------------------------------------------
+
+                if (tiro.getBounds().intersects(chefe.getBoundsAsaDireira2()) || tiro.getBounds().intersects( chefe.getBoundsAsaDireita3() ) || tiro.getBounds().intersects( chefe.getBoundsAsaDireita4()) || tiro.getBounds().intersects(chefe.getBoundsAsaDireita5()) && tiro.podeCausarDano
+                ) {
+
+                    chefe.areaColisaoAsaDireita -= 5;
+
+                    if (chefe.areaColisaoAsaDireita <= 6) {
+                        chefe.areaColisaoAsaDireita = 50;
+                    }
+
+                    chefe.vida -= 1;
+                    chefe.vidaaAsaDireita--;
+
+                    tiro.desenharAcerto = true;
+                    tiro.podeCausarDano = false;
+                    tiro.vel = -chefe.vel;
+
+                    buracosDBala.add(tiro);
+
+                    if (tiro.podeExcluir) {
+                        tirosParaRemover.add(tiro);
+                    }
+                }
+
+
+                // ---------------------------------------------
+                // ASA ESQUERDA
+                // ---------------------------------------------
+
+                if (
+                    tiro.getBounds().intersects( chefe.getBoundsAsaEsquerda2()) || tiro.getBounds().intersects(chefe.getBoundsAsaEsquerda3()) || tiro.getBounds().intersects(chefe.getBoundsAsaEsquerda4()) ||tiro.getBounds().intersects(chefe.getBoundsAsaEsquerda5()) && tiro.podeCausarDano) {
+
+                    chefe.areaColisaoAsaEsquerda -= 5;
+
+                    if (chefe.areaColisaoAsaEsquerda <= 6) {
+                        chefe.areaColisaoAsaEsquerda = 50;
+                    }
+
+                    chefe.vidaAsaEsquerda--;
+
+                    tiro.desenharAcerto = true;
+                    tiro.podeCausarDano = false;
+                    tiro.vel = -chefe.vel;
+
+                    buracosDBala.add(tiro);
+
+                    if (tiro.podeExcluir) {
+                        tirosParaRemover.add(tiro);
+                    }
+                }
+            }
+        }
+
+
+        // =====================================================
+        // LIMPAR BURACOS
+        // =====================================================
+
+        if (buracosDBala.size() >= 40) {
+            buracosDBala.remove(0);
+        }
+
+        // =====================================================
+        // REMOVER INIMIGOS
+        // =====================================================
+
+        inimigos.removeAll(inimigosParaRemover);
+        inimigosParaRemover.clear();
+
+        // =====================================================
+        // MOVER TIROS
+        // =====================================================
+
+        for (Tiro tiro : tirosNave) {
+            tiro.y -= tiro.vel;
+            if (tiro.podeExcluir) {
+                tirosParaRemover.add(tiro);
+            }
         }
 
         tirosNave.removeAll(tirosParaRemover);
         tirosParaRemover.clear();
 
-        
-        
 
-        if(cima && nave.y > 0){
+        // =====================================================
+        // MOVIMENTO DA NAVE
+        // =====================================================
+
+        if (cima && nave.y > 0) {
             nave.y -= nave.vel;
         }
-        if(baixo && nave.y < 900){
+
+        if (baixo && nave.y < 900) {
             nave.y += nave.vel;
         }
-        if(esquerda && nave.x > 0){
+
+        if (esquerda && nave.x > 0) {
             nave.x -= nave.vel;
         }
-        if(direita && nave.x < 1800){
+
+        if (direita && nave.x < 1800) {
             nave.x += nave.vel;
         }
 
+
         repaint();
-
-
     }
-    //====================================================================================
 
-    //Métodos para facilitar a vida e deixar o código menos redundante
-    public ArrayList<Image> carregarsprites(String caminho, int quantidade){
+
+    // =========================================================
+    // MÉTODOS AUXILIARES
+    // =========================================================
+
+    public ArrayList<Image> carregarsprites(String caminho,int quantidade   ) {
+
         ArrayList<Image> lista = new ArrayList<>();
-        for(int i = 1; i <= quantidade; i++){
-            lista.add(new ImageIcon(getClass().getResource(caminho +"(" + i + ").png")).getImage());
+        for (int i = 1; i <= quantidade; i++) {
+            lista.add(new ImageIcon(getClass().getResource(caminho + "(" + i + ").png")).getImage());
         }
         return lista;
-
     }
 
-    public Image carregarSprite(String caminho){
+
+    public Image carregarSprite(String caminho) {
         return new ImageIcon(getClass().getResource(caminho)).getImage();
     }
 
-    //Mouse===============================================================================
+
+    // =========================================================
+    // MOUSE
+    // =========================================================
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        if(ativarMouse){
+
+        if (ativarMouse) {
             nave.x = e.getX() - 55;
             nave.y = e.getY() - 65;
-        } 
+        }
     }
+
 
     @Override
     public void mouseMoved(MouseEvent e) {
-        if(ativarMouse){
+
+        if (ativarMouse) {
             nave.x = e.getX() - 55;
             nave.y = e.getY() - 65;
         }
     }
 
+
     @Override
     public void mouseClicked(MouseEvent e) {
-
     }
+
 
     @Override
     public void mousePressed(MouseEvent e) {
-        if(e.getButton() == MouseEvent.BUTTON1 && nave.vida > 0){
+
+        if (e.getButton() == MouseEvent.BUTTON1 &&nave.vida > 0) {
             atirar = true;
         }
-    
-    
     }
+
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        if(e.getButton() == MouseEvent.BUTTON1){
+
+        if (e.getButton() == MouseEvent.BUTTON1) {
             atirar = false;
         }
-    
     }
+
 
     @Override
     public void mouseEntered(MouseEvent e) {
-    
     }
+
 
     @Override
     public void mouseExited(MouseEvent e) {
-    
     }
-    //==================================================================================
 }
+
