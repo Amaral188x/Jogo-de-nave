@@ -89,7 +89,7 @@ public class Menu extends JPanel implements KeyListener,ActionListener{
             jogo.chefe.vida = 50;
             jogo.chefe.vidaAsaEsquerda = 5;
             jogo.chefe.vidaaAsaDireita = 10;
-            jogo.pontos = 4;
+            jogo.pontos = 5;
             jogo.inimigos.clear();
             jogo.tirosNave.clear();
             jogo.buracosDBala.clear();

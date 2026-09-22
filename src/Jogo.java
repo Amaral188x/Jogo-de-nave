@@ -40,6 +40,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
     public Timer timerSpawnInimigo;
     public Timer timerCarregarFundo;
     public Timer timerTiroChefe;
+    public Timer timerAtivarEspecialChefe;
     // =========================================================
     // SONS
     // =========================================================
@@ -54,6 +55,8 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
     // =========================================================
     // SPRITES
     // =========================================================
+
+    private ArrayList<Image> spritesEspecialChefe = carregarsprites("/chefes/chefe1/Especial/", 11);
 
     private ArrayList<Image> spritesExplosaoChefe = carregarsprites("/chefes/chefe1/danificarArmas/", 10);
 
@@ -137,7 +140,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
     // PONTUAÇÃO
     // =========================================================
 
-    public int pontos = 4;
+    public int pontos = 0;
 
     // =========================================================
     // CONTROLE DAS EXPLOSÕES DO CHEFE
@@ -190,7 +193,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
 
             nave = new Nave(new ImageIcon(getClass().getResource("/nave/nave.png")).getImage(),janela);
 
-            chefe = new Chefe("/chefes/chefe1/chefe.png","/chefes/chefe1/tiroChefe1.png");
+            chefe = new Chefe("/chefes/chefe1/chefe.png","/chefes/chefe1/tiroChefe1.png", spritesEspecialChefe);
 
             // =====================================================
             // MÚSICA
@@ -373,17 +376,29 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
             timerTiroChefe = new Timer(800,new ActionListener() {
                 @Override 
                 public void actionPerformed(ActionEvent e){
-                    tiroschefe.add(new Tiro(chefe.chefeX - 100, chefe.chefeY + 300, tiroNaveImagem, acertoSprites));
-                    tiroschefe.add(new Tiro(chefe.chefeX + 90, chefe.chefeY + 300, tiroNaveImagem, acertoSprites));
-                    tiroschefe.add(new Tiro(chefe.chefeX + 270, chefe.chefeY + 300, tiroNaveImagem, acertoSprites));
+                    if(!chefe.especial){
+                        tiroschefe.add(new Tiro(chefe.chefeX - 100, chefe.chefeY + 300, tiroNaveImagem, acertoSprites));
+                        tiroschefe.add(new Tiro(chefe.chefeX + 90, chefe.chefeY + 300, tiroNaveImagem, acertoSprites));
+                        tiroschefe.add(new Tiro(chefe.chefeX + 270, chefe.chefeY + 300, tiroNaveImagem, acertoSprites));
+                        
+                    }
                 }  
             });
+
+            timerAtivarEspecialChefe = new Timer(2000, new ActionListener() {
+                @Override 
+                public void actionPerformed(ActionEvent e){
+                    chefe.especial = true;
+                }
+            });
+
+            
 
             // =====================================================
             // TIMER DOS INIMIGOS
             // =====================================================
 
-            timerSpawnInimigo = new Timer(1000, new ActionListener() {
+            timerSpawnInimigo = new Timer(2000, new ActionListener() {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -400,7 +415,22 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-
+                    if(chefe.especial){
+                        chefe.especialCrescer += 40;
+                        if(chefe.indiceEspecial < chefe.especialSprites.size() - 1){
+                            if(chefe.indiceEspecial == 7 && chefe.especialCrescer < 1800){
+                                return;
+                            }else{
+                                chefe.indiceEspecial ++;
+                            }
+                            
+                        }else{
+                            chefe.especial = false;
+                            chefe.indiceEspecial = 0;
+                            chefe.especialCrescer = 0;
+                            chefe.especialPodeCausarDano = true;
+                        }
+                    }
                     // Animação do tiro
                     if (indiceAnimacaoTiro < animacaoTiroNave.size() - 1) {
                         indiceAnimacaoTiro++;
@@ -526,22 +556,25 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
 
             }
             chefe.desenharchefe1(g);
+            chefe.desenharEspecial(g);
 
             // =====================================================
             // MALHA
             // =====================================================
             
             if(desenharMalha){
-                malha.desenharNoChefe(g, chefe, 50);
+                malha.desenharNoChefe(g, chefe, 25);
             }
+
             if (desenharMalhaNoChefe){
                 malha.desenhar(g,getWidth(), getHeight(), 50);
             }
+            
 
 
             // Asa esquerda destruída
             if (chefe.vidaAsaEsquerda <= 0) {
-
+               
                 g.drawImage(curtoCircuito.get(indiceCurto),chefe.chefeX - 180,chefe.chefeY + 270,150,150,null);
 
                 g.drawImage(fumacaNaveSprites.get(indiceFumacaNave),chefe.chefeX - 120,chefe.chefeY + 230,150,150,null);
@@ -746,7 +779,6 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
             desenharMalhaNoChefe = !desenharMalhaNoChefe;
         }
     }
-
 
     @Override
     public void keyReleased(KeyEvent e) {
@@ -1002,6 +1034,18 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
 
         if (pontos >= 5) {
             timerTiroChefe.start();
+            timerAtivarEspecialChefe.start();
+            if(chefe.especial && chefe.especialPodeCausarDano){
+                if(chefe.getBoundsEspecialDireia().intersects(nave.getbounds())){
+                    nave.vida -= 5;
+                    chefe.especialPodeCausarDano = false;
+                }
+
+                if(chefe.getBoundsEspecialEsquerda().intersects(nave.getbounds())){
+                    nave.vida -= 5;
+                    chefe.especialPodeCausarDano = false;
+                }
+            }
 
             for(Tiro tiro : tiroschefe){
                 tiro.y += 20;
