@@ -51,6 +51,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
     public Som somFundo = new Som("sons/fundo/fundo.wav");
     public Som somExplosao = new Som("/sons/inimigo/explosaoDanificarChefe.wav");
     public Som atingido = new Som("/sons/nave/atingido.wav");
+    public Som especialChefeSom = new Som("/sons/inimigo/especialChefeSom.wav");
 
     // =========================================================
     // SPRITES
@@ -279,7 +280,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
                                     timerSpawnInimigo.stop();
                                     timerTiro.stop();
                                     timerCarregarFundo.stop();
-
+                                    timerAtivarEspecialChefe.stop();
                                     somFundo.parar();
 
                                     pontos = 0;
@@ -373,19 +374,26 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
                 }
             });
 
-            timerTiroChefe = new Timer(800,new ActionListener() {
+            timerTiroChefe = new Timer(700,new ActionListener() {
                 @Override 
                 public void actionPerformed(ActionEvent e){
+
                     if(!chefe.especial){
-                        tiroschefe.add(new Tiro(chefe.chefeX - 100, chefe.chefeY + 300, tiroNaveImagem, acertoSprites));
+                        if(chefe.vidaAsaEsquerda > 0){
+                            tiroschefe.add(new Tiro(chefe.chefeX - 100, chefe.chefeY + 300, tiroNaveImagem, acertoSprites));
+                        }
+
                         tiroschefe.add(new Tiro(chefe.chefeX + 90, chefe.chefeY + 300, tiroNaveImagem, acertoSprites));
-                        tiroschefe.add(new Tiro(chefe.chefeX + 270, chefe.chefeY + 300, tiroNaveImagem, acertoSprites));
+
+                        if(chefe.vidaaAsaDireita > 0){
+                            tiroschefe.add(new Tiro(chefe.chefeX + 270, chefe.chefeY + 300, tiroNaveImagem, acertoSprites));
+                        }
                         
                     }
                 }  
             });
 
-            timerAtivarEspecialChefe = new Timer(2000, new ActionListener() {
+            timerAtivarEspecialChefe = new Timer(6000, new ActionListener() {
                 @Override 
                 public void actionPerformed(ActionEvent e){
                     chefe.especial = true;
@@ -419,6 +427,9 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
                         chefe.especialCrescer += 40;
                         if(chefe.indiceEspecial < chefe.especialSprites.size() - 1){
                             if(chefe.indiceEspecial == 7 && chefe.especialCrescer < 1800){
+                                if(especialChefeSom.terminou()){
+                                    especialChefeSom.tocarSom();
+                                }
                                 return;
                             }else{
                                 chefe.indiceEspecial ++;
@@ -1033,6 +1044,13 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
         // =====================================================
 
         if (pontos >= 5) {
+            if(pontos == 5){
+                especialChefeSom.tocarSom();
+            }
+            if(chefe.vidaAsaEsquerda <= 0 && chefe.vidaaAsaDireita <= 0){
+                timerAtivarEspecialChefe.stop();
+            }
+
             timerTiroChefe.start();
             timerAtivarEspecialChefe.start();
             if(chefe.especial && chefe.especialPodeCausarDano){

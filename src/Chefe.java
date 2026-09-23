@@ -283,15 +283,18 @@ public class Chefe {
     public Rectangle getBoundsEspecialDireia(){
         if(vidaaAsaDireita <= 0 || !especialPodeCausarDano){
             return new Rectangle(00, 0, 0,0);  
+        }else{
+            return new Rectangle(chefeX + 160 + 64, chefeY + 350 + 64, 128, 384 + especialCrescer);     
         }
-        return new Rectangle(chefeX + 160 + 64, chefeY + 350 + 64, 128, 384 + especialCrescer);     
+        
     }
 
     public Rectangle getBoundsEspecialEsquerda(){
 
         if(vidaAsaEsquerda <= 0 || !especialPodeCausarDano){
             return new Rectangle(00, 0, 0,0);  
+        }else{
+            return new Rectangle(chefeX - 210 + 64, chefeY + 350 + 64, 128, 384 + especialCrescer);
         }
-        return new Rectangle(chefeX - 210 + 64, chefeY + 350 + 64, 128, 384 + especialCrescer);
     }
 }
