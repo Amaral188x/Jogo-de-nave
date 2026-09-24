@@ -70,7 +70,7 @@ public class Chefe {
         tamY = 480;
 
         vida = 50;
-        vel = 0;
+        vel = 10;
 
         // Vida das asas
         vidaAsaEsquerda = 5;

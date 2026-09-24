@@ -1,7 +1,10 @@
 import java.awt.*;
 //Desenha linhas na horizontal e vertical com cooredenadas para facilitar o posicionamento de elementos
 public class GridDebug {
-    
+        // ==========================================
+        // Plano cartesiano do fundo
+        // ==========================================
+
     public void desenhar(Graphics g, int largura, int altura, int espacamento) {
 
         g.setColor(new Color(255, 255, 255, 80)); // branco transparente
@@ -19,13 +22,16 @@ public class GridDebug {
         }
     }
 
+         // ==========================================
+        // Plano cartesiano do chefe
+        // ==========================================
     public void desenharNoChefe(Graphics g, Chefe chefe, int espacamento) {
 
-        // Calculamos o centro exato do chefe na tela
+        // Calcular o centro exato do chefe na tela
         int centroX = chefe.chefeX + (chefe.tamX / 2) - 150; 
         int centroY = chefe.chefeY + (chefe.tamY / 2);
 
-        // Definimos a área que a malha vai cobrir ao redor do centro
+        // Definira área que a malha vai cobrir ao redor do centro
         int metadeLargura = chefe.tamX / 2;
         int metadeAltura = chefe.tamY / 2;
 
@@ -34,7 +40,7 @@ public class GridDebug {
         int inicioY = centroY - metadeAltura;
         int fimY = centroY + metadeAltura;
 
-        // Cor da malha com transparência
+        
         g.setColor(new Color(0, 255, 255));
 
         // ==========================================
@@ -46,6 +52,7 @@ public class GridDebug {
             int valorRelativoX = x - centroX;
             g.drawString(String.valueOf(valorRelativoX), x + 2, centroY - 2);
         }
+
         for (int x = centroX - espacamento; x >= inicioX; x -= espacamento) {
             g.drawLine(x, inicioY, x, fimY);
             int valorRelativoX = x - centroX; // Vai gerar valores negativos (-50, -100...)

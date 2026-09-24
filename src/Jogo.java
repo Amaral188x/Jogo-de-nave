@@ -383,7 +383,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
                             tiroschefe.add(new Tiro(chefe.chefeX - 100, chefe.chefeY + 300, tiroNaveImagem, acertoSprites));
                         }
 
-                        tiroschefe.add(new Tiro(chefe.chefeX + 90, chefe.chefeY + 300, tiroNaveImagem, acertoSprites));
+                        tiroschefe.add(new Tiro(chefe.chefeX + 84, chefe.chefeY + 300, tiroNaveImagem, acertoSprites));
 
                         if(chefe.vidaaAsaDireita > 0){
                             tiroschefe.add(new Tiro(chefe.chefeX + 270, chefe.chefeY + 300, tiroNaveImagem, acertoSprites));
@@ -574,10 +574,11 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
             // =====================================================
             
             if(desenharMalha){
-                malha.desenharNoChefe(g, chefe, 25);
+                malha.desenharNoChefe(g, chefe, 20);
             }
 
             if (desenharMalhaNoChefe){
+
                 malha.desenhar(g,getWidth(), getHeight(), 50);
             }
             
@@ -650,11 +651,9 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
         // MARCAS DE TIRO NO CHEFE
         // =====================================================
 
-        for (Tiro tiro : buracosDBala) {
-
-            tiro.x += chefe.vel;
-
-            g.drawImage(new ImageIcon(getClass().getResource("/nave/marca de tiro.png")).getImage(), tiro.x, tiro.y, 20, 20, null);
+        for (Tiro buraco : buracosDBala) {
+            
+            g.drawImage(new ImageIcon(getClass().getResource("/nave/marca de tiro.png")).getImage(), chefe.chefeX + buraco.distanciaChefeX, chefe.chefeY + buraco.distanciaChefeY, 20, 20, null);
         }
 
         
@@ -1044,6 +1043,17 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
         // =====================================================
 
         if (pontos >= 5) {
+        // =====================================================
+        // Movimentação
+        // =====================================================
+
+            if(chefe.chefeX > nave.x){
+                chefe.chefeX -= chefe.vel;
+            }
+            if(chefe.chefeX < nave.x){
+                chefe.chefeX += chefe.vel;
+            }
+
             if(pontos == 5){
                 especialChefeSom.tocarSom();
             }
@@ -1115,10 +1125,11 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
 
                     tiro.desenharAcerto = true;
                     tiro.podeCausarDano = false;
-
+                    tiro.distanciaChefeX = tiro.x - chefe.chefeX;
+                    tiro.distanciaChefeY = tiro.y - chefe.chefeY;
                     buracosDBala.add(tiro);
 
-                    tiro.vel = -chefe.vel;
+                    tiro.vel = 0;
 
                     if (tiro.podeExcluir) {
                         tirosParaRemover.add(tiro);
@@ -1143,6 +1154,8 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
                     tiro.desenharAcerto = true;
                     tiro.podeCausarDano = false;
                     tiro.vel = 0;
+                    tiro.distanciaChefeX = tiro.x - chefe.chefeX;
+                    tiro.distanciaChefeY = tiro.y - chefe.chefeY;
 
                     buracosDBala.add(tiro);
 
@@ -1170,7 +1183,9 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
 
                     tiro.desenharAcerto = true;
                     tiro.podeCausarDano = false;
-                    tiro.vel = -chefe.vel;
+                    tiro.distanciaChefeX = tiro.x - chefe.chefeX;
+                    tiro.distanciaChefeY = tiro.y - chefe.chefeY;
+                    tiro.vel = 0;
 
                     buracosDBala.add(tiro);
 
@@ -1197,7 +1212,9 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
 
                     tiro.desenharAcerto = true;
                     tiro.podeCausarDano = false;
-                    tiro.vel = -chefe.vel;
+                    tiro.distanciaChefeX = tiro.x - chefe.chefeX;
+                    tiro.distanciaChefeY = tiro.y - chefe.chefeY;
+                    tiro.vel = 0;
 
                     buracosDBala.add(tiro);
 

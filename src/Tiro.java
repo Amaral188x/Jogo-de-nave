@@ -12,14 +12,14 @@ import javax.swing.Timer;
 public class Tiro implements ActionListener{
     public ArrayList<Image> acertoSprites;
     public boolean desenharAcerto = false, podeExcluir = false,podeCausarDano = true;
-    public int x,y,tamX,tamY,indiceAcerto = 0,vel = 30;
+    public int x,y,tamX,tamY,indiceAcerto = 0,vel = 30, distanciaChefeX, distanciaChefeY;
     private Image img;
     
     public Tiro(int x, int y,Image img,ArrayList<Image> acertoSprites){
         this.x = x;
         this.y = y;
         this.img = img;
-        tamX = 16;
+        tamX = 20;
         tamY = 32;
         this.acertoSprites = acertoSprites;
         Timer timer = new Timer(50, this);
