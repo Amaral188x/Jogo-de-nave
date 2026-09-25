@@ -81,9 +81,9 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
 
     private ArrayList<Image> explosaoInimigo =carregarsprites("/inimigo/explosao/", 10);
 
-    private ArrayList<Image> fumaca =carregarsprites("/inimigo/fumaça/", 4);
+    private ArrayList<Image> fumaca =carregarsprites("/inimigo/fumaca/", 4);
 
-    private ArrayList<Image> fumacaNaveSprites =carregarsprites("/nave/fumaça/", 45);
+    private ArrayList<Image> fumacaNaveSprites =carregarsprites("/nave/fumaca/", 45);
 
     //colocamos apenas 10 para previnir de dar erro de nullpoint (o restante dos frames serão carregados no timer fcarregarFundo)
     private ArrayList<Image> chefeDerrotadoSprites = new ArrayList<>();
@@ -1355,7 +1355,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
         chefe.vida = 50;
         chefe.vidaAsaEsquerda = 5;
         chefe.vidaaAsaDireita = 10;
-        chefe.vel = 5;
+        chefe.vel = 10;
 
         chefe.especial = false;
         chefe.especialPodeCausarDano = false;
@@ -1367,7 +1367,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
         // RESETAR PONTUAÇÃO
         // =====================================================
 
-        pontos = 5;
+        pontos = 0;
 
         // =====================================================
         // LIMPAR OBJETOS
