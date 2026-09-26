@@ -59,11 +59,11 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
 
     private ArrayList<Image> spritesEspecialChefe = carregarsprites("/chefes/chefe1/Especial/", 11);
 
-    private ArrayList<Image> spritesExplosaoChefe = carregarsprites("/chefes/chefe1/danificarArmas/", 10);
+    private ArrayList<Image> spritesExplosaoChefe = carregarsprites("/chefes/chefe1/DanificarArmas/", 10);
 
     private ArrayList<Image> curtoCircuito2 =carregarsprites("/chefes/chefe1/danificado2/", 40);
 
-    private ArrayList<Image> curtoCircuito =carregarsprites("/chefes/chefe1/danificado/", 39);
+    private ArrayList<Image> curtoCircuito =carregarsprites("/chefes/chefe1/Danificado/", 39);
 
     private ArrayList<Image> framesDerrota =new ArrayList<>();
 
@@ -201,7 +201,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
 
             nave = new Nave(new ImageIcon(getClass().getResource("/nave/nave.png")).getImage(),janela);
 
-            chefe = new Chefe("/chefes/chefe1/chefe.png","/chefes/chefe1/tiroChefe1.png", spritesEspecialChefe);
+            chefe = new Chefe("/chefes/chefe1/tiroChefe1.png", spritesEspecialChefe);
 
             // =====================================================
             // MÚSICA
@@ -296,27 +296,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
                                     }
 
                                 } else {
-
-                                    indiceAnimacaoDerrota = 1;
-
-                                    timerGeral.stop();
-                                    timerAnimacao.stop();
-                                    timerSpawnInimigo.stop();
-                                    timerTiro.stop();
-                                    timerCarregarFundo.stop();
-                                    timerAtivarEspecialChefe.stop();
-                                    somFundo.parar();
-
-                                    pontos = 0;
-                                    nave.vida = nave.vidaMaxima;
-
-                                    inimigos.clear();
-                                    inimigosParaRemover.clear();
-
-                                    tirosNave.clear();
-                                    tirosParaRemover.clear();
-
-                                    framesDerrota.clear();
+                                   resetarJogo();
 
                                     janela.setContentPane(menu);
 
@@ -493,6 +473,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
 
         } catch (Exception erro) {
             System.out.println("ERRO NO CONSTRUTOR DA CLASSE JOGO! " +"CÓDIGO DE ERRO: " + erro);
+            erro.printStackTrace();
         }
     }
 
@@ -718,9 +699,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
 
         g.drawString("LIFE: ", 10, 30);
 
-        g.drawString( "vida asas: " + chefe.vidaAsaEsquerda + " " + chefe.vidaaAsaDireita, 10, 200);
-
-        g.drawString("vida corpo " + chefe.vida,10,370);
+        g.drawString("BOSS " + chefe.vida,10,370);
 
         g.setColor(java.awt.Color.GREEN);
 
@@ -1239,8 +1218,9 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
             }
         }
 
-        if(chefe.vida <= 0){
+        if(chefe.vida <= 0 || pontos < 5){
             timerAtivarEspecialChefe.stop();
+            timerTiroChefe.stop();
             if(terminouExplosaoChefe){
                 timerSpawnInimigo.start();
             }
@@ -1306,7 +1286,6 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
     // =========================================================
 
     public ArrayList<Image> carregarsprites(String caminho,int quantidade   ) {
-
         ArrayList<Image> lista = new ArrayList<>();
         for (int i = 1; i <= quantidade; i++) {
             lista.add(new ImageIcon(getClass().getResource(caminho + "(" + i + ").png")).getImage());
@@ -1344,6 +1323,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
 
         fumacaNave = false;
 
+        indiceAnimacaoDerrota = 1;
         indiceExplosaoNave = 0;
         indiceFumacaNave = 0;
         indiceFumacaNave2 = 0;
@@ -1409,7 +1389,6 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
         indiceCurto3 = 0;
         indiceCurto4 = 0;
 
-        chefeDerrotadoSprites.clear();
 
         // =====================================================
         // RESETAR ANIMAÇÕES
@@ -1418,8 +1397,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
         indiceAnimacaoTiro = 0;
         indiceTurbina = 0;
 
-        framesDerrota.clear();
-        vidaNaveFrames.clear();
+        
 
         numeroFrameAtualVidaNave = 1;
         // =====================================================
@@ -1437,17 +1415,10 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
         // RESETAR FUNDO
         // =====================================================
 
-        fundo.clear();
 
         indiceFundo = 1;
 
-        for (int i = 1; i <= 10; i++) {
-            fundo.add(
-                new ImageIcon(
-                    getClass().getResource("/jogo/fundo/(" + i + ").jpg")
-                ).getImage()
-            );
-        }
+        
         // =====================================================
         // RESETAR MÚSICA
         // =====================================================

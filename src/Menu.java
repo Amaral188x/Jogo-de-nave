@@ -38,6 +38,7 @@ public class Menu extends JPanel implements KeyListener,ActionListener{
             public void actionPerformed(ActionEvent e) {
                 try{
                     if(indiceFundo <= totalFrames){
+
                         if(fundo.size() < 20){
                             BufferedImage img = ImageIO.read(getClass().getResource("/menu/fundo/(" + indiceFundo + ").jpg"));
                             fundo.add(img);
@@ -51,14 +52,13 @@ public class Menu extends JPanel implements KeyListener,ActionListener{
                 }  
              catch(Exception Err){
                 System.out.println("ERRO AO CARREGAR FUNDO NO MENU! CÓDIGO DE ERRO: " + Err);
+                Err.printStackTrace();
             }
         }
         });
 
         timerAdicionarFrame.start();
         
-        
-
         timerGeral = new Timer(20,this);
         timerGeral.start(); 
     }
@@ -66,12 +66,13 @@ public class Menu extends JPanel implements KeyListener,ActionListener{
     @Override
     public void paintComponent(Graphics g){
         super.paintComponent(g);
-        if(fundo.size() >= 3){
+        if(!fundo.isEmpty()){
             g.drawImage(fundo.get(0), 0,0,getWidth(),getHeight(),null);
-            fundo.remove(0);
+            if(fundo.size() >= 4){
+                fundo.remove(0);
+            }
         }
 
-        
     }
 
     @Override
@@ -110,9 +111,6 @@ public class Menu extends JPanel implements KeyListener,ActionListener{
             // Parar o timer do menu
             timerGeral.stop();
         }
-
-
-
 
         if(e.getKeyCode() == KeyEvent.VK_ESCAPE){
             System.exit(0);

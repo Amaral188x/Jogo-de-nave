@@ -20,8 +20,8 @@ public class Chefe {
     // Imagens
     public Image corpoNormal;
     public Image corpoDanificado;
-    public Image especialMeio = new ImageIcon(getClass().getResource("/chefes/chefe1/especial/energiaMeio.png")).getImage();
-    public Image especialFim= new ImageIcon(getClass().getResource("/chefes/chefe1/especial/energiaFim.png")).getImage();
+    public Image especialMeio = new ImageIcon(getClass().getResource("/chefes/chefe1/Especial/energiaMeio.png")).getImage();
+    public Image especialFim= new ImageIcon(getClass().getResource("/chefes/chefe1/Especial/energiaFim.png")).getImage();
 
     public Image asaDireitaNormal;
     public Image asaDireitaDanificada;
@@ -39,7 +39,7 @@ public class Chefe {
     public boolean especial = false;
     public boolean especialPodeCausarDano = true;
 
-    public Chefe(String caminho, String caminhoTiroImg, ArrayList<Image> especialSprites) {
+    public Chefe( String caminhoTiroImg, ArrayList<Image> especialSprites) {
 
         chefeY = 100;
         chefeX = 500;
