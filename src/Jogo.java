@@ -107,7 +107,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
     // =========================================================
 
     private Image tiroNaveImagem =carregarSprite("/nave/tiro.png");
-
+    private Image buracoImg = new ImageIcon(getClass().getResource("/nave/marca de tiro.png")).getImage();
     private Image inimigoImg =carregarSprite("/inimigo/inimigo.png");
 
     // =========================================================
@@ -644,7 +644,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
 
             for (Tiro buraco : buracosDBala) {
             
-                g.drawImage(new ImageIcon(getClass().getResource("/nave/marca de tiro.png")).getImage(), chefe.chefeX + buraco.distanciaChefeX, chefe.chefeY + buraco.distanciaChefeY, 20, 20, null);
+                g.drawImage(buracoImg, chefe.chefeX + buraco.distanciaChefeX, chefe.chefeY + buraco.distanciaChefeY, 20, 20, null);
             }
 
             
@@ -667,12 +667,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
         }
 
 
-        // =====================================================
-        // MARCAS DE TIRO NO CHEFE
-        // =====================================================
-
-       
-
+        
         
        
         // =====================================================
@@ -995,6 +990,8 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
 
         for (Inimigo inimigo : inimigos) {
 
+            inimigo.atualizar();
+
             inimigo.y += inimigo.vel;
 
 
@@ -1069,6 +1066,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
             }
 
             for(Tiro tiro : tiroschefe){
+                tiro.atualizar();
                 tiro.y += 20;
                 if(tiro.y > 1100){
                     tirosParaRemover.add(tiro);
@@ -1224,7 +1222,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
             if(terminouExplosaoChefe){
                 timerSpawnInimigo.start();
             }
-            
+
         }
         // =====================================================
         // LIMPAR BURACOS
@@ -1246,6 +1244,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
         // =====================================================
 
         for (Tiro tiro : tirosNave) {
+            tiro.atualizar();
             tiro.y -= tiro.vel;
             if (tiro.podeExcluir) {
                 tirosParaRemover.add(tiro);

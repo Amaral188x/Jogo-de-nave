@@ -1,19 +1,14 @@
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Random;
 
-import javax.swing.Timer;
-
-public class Inimigo implements ActionListener{
+public class Inimigo {
     public boolean podeExplodir = false,podeExcluir = false, podeColidir = true,tocarExplosao = true;
     public int x,y,vida = 3,vel = 5, tamX = 150, tamY = 150,indice,indiceFumaca = 0;
     private ArrayList<Image> explosao,fumaca;
     private Image imgInimigo;
-    private Timer timer;
     private Som SomExplosao = new Som("/sons/inimigo/explosao.wav");
 
     @SuppressWarnings("unchecked")
@@ -22,31 +17,17 @@ public class Inimigo implements ActionListener{
         this.explosao = explosao;
         this.fumaca = fumaca;
 
-        timer = new Timer(50,this);
-        timer.start();
-
         Random random = new Random();
         y = -50;
         x = random.nextInt(1800);
 
     }
 
-    public void desenhar(Graphics g){
-        if(podeExplodir){
-            g.drawImage(explosao.get(indice),x - 80,y - 60,tamX * 2,tamY * 2,null);
-        }else{
-           
-            g.drawImage(imgInimigo,x,y,tamX,tamY,null);
-            g.drawImage(fumaca.get(indiceFumaca), x + 60, y + 25, 80,80,null);
-        }
-    }
+    // =========================================================
+    // ATUALIZAÇÃO (chamada pelo timerGeral do Jogo)
+    // =========================================================
 
-    public Rectangle getBounds(){
-        return new Rectangle(x, y, tamX, tamY - 50);
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
+    public void atualizar(){
         if(vida <= 0){
             if(tocarExplosao){
                 SomExplosao.tocarSom();
@@ -56,7 +37,7 @@ public class Inimigo implements ActionListener{
             vel = 5;
             podeExplodir = true;
         }
-        
+
         if(indiceFumaca < fumaca.size() - 1){
             indiceFumaca ++;
         }else{
@@ -74,5 +55,18 @@ public class Inimigo implements ActionListener{
             }
         }
     }
-    
+
+    public void desenhar(Graphics g){
+        if(podeExplodir){
+            g.drawImage(explosao.get(indice),x - 80,y - 60,tamX * 2,tamY * 2,null);
+        }else{
+
+            g.drawImage(imgInimigo,x,y,tamX,tamY,null);
+            g.drawImage(fumaca.get(indiceFumaca), x + 60, y + 25, 80,80,null);
+        }
+    }
+
+    public Rectangle getBounds(){
+        return new Rectangle(x, y, tamX, tamY - 50);
+    }
 }
