@@ -18,7 +18,7 @@ public class Menu extends JPanel implements KeyListener,ActionListener{
     private JFrame janela;
     private ArrayList<Image> fundo = new ArrayList<>();
     public Timer timerGeral,timerAdicionarFrame;
-    private int indiceFundo = 1,totalFrames = 286;
+    private int indiceFundo = 1,totalFrames = 143;
     private Jogo jogo;
     
     public Menu(JFrame janela){
@@ -33,7 +33,7 @@ public class Menu extends JPanel implements KeyListener,ActionListener{
             fundo.add(new ImageIcon(getClass().getResource("/menu/fundo/(" + i + ").jpg")).getImage());
         }
 
-        timerAdicionarFrame = new Timer(5, new ActionListener() {
+        timerAdicionarFrame = new Timer(6, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try{
@@ -59,7 +59,7 @@ public class Menu extends JPanel implements KeyListener,ActionListener{
 
         timerAdicionarFrame.start();
         
-        timerGeral = new Timer(20,this);
+        timerGeral = new Timer(30,this);
         timerGeral.start(); 
     }
 

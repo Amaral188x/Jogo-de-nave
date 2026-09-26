@@ -139,8 +139,8 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
     // CONFIGURAÇÕES DE ANIMAÇÃO
     // =========================================================
 
-    private final int totalFrames = 251;
-    private final int totalFramesVida = 300;
+    private final int totalFrames = 126;
+    private final int totalFramesVida = 150;
 
     // =========================================================
     // PONTUAÇÃO
@@ -262,7 +262,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
                         // -------------------------------------------------
                         if(chefe.vida < 30 && !terminouExplosaoChefe){
                             if(chefeDerrotadoSprites.size() < 20){
-                                if(indiceExplosaoChefe < 352 ){
+                                if(indiceExplosaoChefe < 176 ){
                                     BufferedImage img = ImageIO.read(getClass().getResource("/chefes/chefe1/explosao/(" + indiceExplosaoChefe + ").png"));
                                     chefeDerrotadoSprites.add(img);
                                     indiceExplosaoChefe ++;
@@ -283,14 +283,14 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
 
                             if (framesDerrota.size() < 20) {
 
-                                if (indiceAnimacaoDerrota < 114) {
+                                if (indiceAnimacaoDerrota < 57) {
 
                                     BufferedImage img =ImageIO.read(getClass().getResource("/jogo/derrota/(" +indiceAnimacaoDerrota +").png"));
 
                                     framesDerrota.add(img);
                                     indiceAnimacaoDerrota++;
 
-                                    if (indiceAnimacaoDerrota == 57) {
+                                    if (indiceAnimacaoDerrota == 29) {
                                         perdeu.setVolume(2.0f);
                                         perdeu.tocarSom();
                                     }
@@ -357,7 +357,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
             // TIMER GERAL
             // =====================================================
 
-            timerGeral = new Timer(16, this);
+            timerGeral = new Timer(20, this);
 
 
             // =====================================================
@@ -410,7 +410,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
             // TIMER DOS INIMIGOS
             // =====================================================
 
-            timerSpawnInimigo = new Timer(2000, new ActionListener() {
+            timerSpawnInimigo = new Timer(1500, new ActionListener() {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
