@@ -67,7 +67,7 @@ public class Menu extends JPanel implements KeyListener,ActionListener{
     public void paintComponent(Graphics g){
         super.paintComponent(g);
         if(!fundo.isEmpty()){
-            g.drawImage(fundo.get(0), 0,0,getWidth(),getHeight(),null);
+            g.drawImage(fundo.get(0), 0,0,null);
             if(fundo.size() >= 4){
                 fundo.remove(0);
             }
@@ -93,7 +93,10 @@ public class Menu extends JPanel implements KeyListener,ActionListener{
             jogo.timerSpawnInimigo.start();
             jogo.timerTiro.start();
             jogo.timerGeral.start();
-            jogo.timerCarregarFundo.start();
+
+            // Carrega as imagens em uma thread separada (fora da EDT)
+            jogo.iniciarCarregamentoRecursos();
+
             jogo.timerTiroChefe.start();
             jogo.timerAtivarEspecialChefe.start();
 
