@@ -64,7 +64,8 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
     public Som somExplosao = new Som("/sons/inimigo/explosaoDanificarChefe.wav");
     public Som atingido = new Som("/sons/nave/atingido.wav");
     public Som especialChefeSom = new Som("/sons/inimigo/especialChefeSom.wav");
-    public Som naveLevouDanoEspecialChefe = new Som("/sons/nave/levou dano do chefe.wav");
+    public Som naveLevouDanoEspecialChefe = new Som("/sons/nave/levouDanoDoChefe.wav");
+    public Som chefeDerrotadoExplosaoSom = new Som("/sons/inimigo/chefeDerrotadoExplosao.wav");
 
     // =========================================================
     // sprites
@@ -168,6 +169,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
     public boolean podeTocarSomExplosaoCorpo = true;
     public boolean podeTocarSomExplosaoAsaEsquerda = true;
     public boolean podeTocarSomExplosaoAsaDireita = true;
+    public boolean podeTocarSomExplosaoChefe = true;
 
     public boolean podeExplodirCorpoChefe = true;
     public boolean podeExplodirAsaEsquerdaChefe = true;
@@ -208,6 +210,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
             addMouseListener(this);
             addMouseMotionListener(this);
 
+    
             perdeu.setVolume(2.0f);
 
             // =====================================================
@@ -298,6 +301,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
                                     } else {
 
                                         terminouExplosaoChefe = true;
+                                        podeTocarSomExplosaoChefe = true;
                                         indiceExplosaoChefe = 1;
 
                                         synchronized (chefeDerrotadoSprites) {
@@ -477,7 +481,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
             // TIMER DOS INIMIGOS
             // =====================================================
 
-            timerSpawnInimigo = new Timer(2000, new ActionListener() {
+            timerSpawnInimigo = new Timer(1000, new ActionListener() {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -1100,6 +1104,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
         // =====================================================
 
         if (pontos >= 5 && chefe.vida > 0) {
+
         // =====================================================
         // Movimentação
         // =====================================================
@@ -1112,8 +1117,12 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
             }
 
             if(pontos == 5){
+                //Inicializar esses efeitos especiais
+                 naveLevouDanoEspecialChefe.setVolume(2.0f);
+                naveLevouDanoEspecialChefe.tocarSom();
                 especialChefeSom.tocarSom();
             }
+
             if(chefe.vidaAsaEsquerda <= 0 && chefe.vidaaAsaDireita <= 0 || chefe.vida <= 0){
                 timerAtivarEspecialChefe.stop();
             }
@@ -1124,11 +1133,18 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
                 if(chefe.getBoundsEspecialDireia().intersects(nave.getbounds())){
                     nave.vida -= 5;
                     chefe.especialPodeCausarDano = false;
+                    if(naveLevouDanoEspecialChefe.terminou()){
+                        naveLevouDanoEspecialChefe.tocarSom();
+                    }
+                    
                 }
 
                 if(chefe.getBoundsEspecialEsquerda().intersects(nave.getbounds())){
                     nave.vida -= 5;
                     chefe.especialPodeCausarDano = false;
+                    if(naveLevouDanoEspecialChefe.terminou()){
+                        naveLevouDanoEspecialChefe.tocarSom();
+                    }
                 }
             }
 
@@ -1281,6 +1297,14 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
                     }
                 }
             }
+        }
+
+        
+
+        if(chefe.vida <= 0 && podeTocarSomExplosaoChefe){
+            chefeDerrotadoExplosaoSom.setVolume(2.0f);
+            chefeDerrotadoExplosaoSom.tocarSom();
+            podeTocarSomExplosaoChefe = false;
         }
 
         if(chefe.vida <= 0 || pontos < 5){
