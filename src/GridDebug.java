@@ -28,12 +28,12 @@ public class GridDebug {
     public void desenharNoChefe(Graphics g, Chefe chefe, int espacamento) {
 
         // Calcular o centro exato do chefe na tela
-        int centroX = chefe.chefeX + (chefe.tamX / 2) - 150; 
-        int centroY = chefe.chefeY + (chefe.tamY / 2);
+        int centroX = chefe.getChefeX() + (chefe.getTamX() / 2) - 150;
+        int centroY = chefe.getChefeY() + (chefe.getTamY() / 2);
 
         // Definira área que a malha vai cobrir ao redor do centro
-        int metadeLargura = chefe.tamX / 2;
-        int metadeAltura = chefe.tamY / 2;
+        int metadeLargura = chefe.getTamX() / 2;
+        int metadeAltura = chefe.getTamY() / 2;
 
         int inicioX = centroX - metadeLargura;
         int fimX = centroX + metadeLargura;

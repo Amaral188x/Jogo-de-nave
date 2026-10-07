@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import javax.swing.ImageIcon;
 
 public class Tiro {
-    public ArrayList<Image> acertoSprites;
-    public boolean desenharAcerto = false, podeExcluir = false,podeCausarDano = true;
-    public int x,y,tamX,tamY,indiceAcerto = 0,vel = 30, distanciaChefeX, distanciaChefeY;
+    private ArrayList<Image> acertoSprites;
+    private boolean desenharAcerto = false, podeExcluir = false,podeCausarDano = true;
+    private int x,y,tamX,tamY,indiceAcerto = 0,vel = 30, distanciaChefeX, distanciaChefeY;
     private Image img;
 
     public Tiro(int x, int y,Image img,ArrayList<Image> acertoSprites){
@@ -66,4 +66,67 @@ public class Tiro {
             return lista;
 
         }
+// =========================================================
+    // ENCAPSULAMENTO
+    // =========================================================
+
+    public int getX() {
+        return x;
     }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    public int getVel() {
+        return vel;
+    }
+
+    public void setVel(int vel) {
+        this.vel = vel;
+    }
+
+    public boolean isDesenharAcerto() {
+        return desenharAcerto;
+    }
+
+    public void setDesenharAcerto(boolean desenharAcerto) {
+        this.desenharAcerto = desenharAcerto;
+    }
+
+    public boolean isPodeExcluir() {
+        return podeExcluir;
+    }
+
+    public boolean isPodeCausarDano() {
+        return podeCausarDano;
+    }
+
+    public void setPodeCausarDano(boolean podeCausarDano) {
+        this.podeCausarDano = podeCausarDano;
+    }
+
+    public int getDistanciaChefeX() {
+        return distanciaChefeX;
+    }
+
+    public void setDistanciaChefeX(int distanciaChefeX) {
+        this.distanciaChefeX = distanciaChefeX;
+    }
+
+    public int getDistanciaChefeY() {
+        return distanciaChefeY;
+    }
+
+    public void setDistanciaChefeY(int distanciaChefeY) {
+        this.distanciaChefeY = distanciaChefeY;
+    }
+}

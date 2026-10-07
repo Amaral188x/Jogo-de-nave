@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Inimigo {
-    public boolean podeExplodir = false,podeExcluir = false, podeColidir = true,tocarExplosao = true;
-    public int x,y,vida = 3,vel = 5, tamX = 150, tamY = 150,indice,indiceFumaca = 0;
+    private boolean podeExplodir = false,podeExcluir = false, podeColidir = true,tocarExplosao = true;
+    private int x,y,vida = 3,vel = 5, tamX = 150, tamY = 150,indice,indiceFumaca = 0;
     private ArrayList<Image> explosao,fumaca;
     private Image imgInimigo;
     private Som SomExplosao = new Som("/sons/inimigo/explosao.wav");
@@ -68,5 +68,45 @@ public class Inimigo {
 
     public Rectangle getBounds(){
         return new Rectangle(x, y, tamX, tamY - 50);
+    }
+
+    // =========================================================
+    // getters e setters
+    // =========================================================
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    public int getVida() {
+        return vida;
+    }
+
+    public void setVida(int vida) {
+        this.vida = vida;
+    }
+
+    public int getVel() {
+        return vel;
+    }
+
+    public void setVel(int vel) {
+        this.vel = vel;
+    }
+
+    public boolean isPodeExcluir() {
+        return podeExcluir;
+    }
+
+    public boolean isPodeColidir() {
+        return podeColidir;
     }
 }

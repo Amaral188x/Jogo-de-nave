@@ -35,7 +35,10 @@ public class Som {
             clip.open(audioStream);
             setVolume(volume); // aplica o volume ao novo Clip
             clip.start();
-        }catch( Exception e){System.out.println("Erro na classe som " + e); e.printStackTrace(); }
+        }catch( Exception e){
+            System.err.println("Erro na classe Som ao tocar o som:");
+            e.printStackTrace();
+        }
     }
 
     public void tocarLoop(){
@@ -46,7 +49,7 @@ public class Som {
         clip.loop(clip.LOOP_CONTINUOUSLY) ;
         clip.start();
         }catch(Exception e){
-            System.out.println("\n Erro na classe som ao tocar loop" + e);
+            System.err.println("Erro na classe Som ao tocar o loop:");
             e.printStackTrace();
         }
         

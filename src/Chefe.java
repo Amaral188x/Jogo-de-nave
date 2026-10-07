@@ -4,40 +4,40 @@ import java.util.ArrayList;
 
 public class Chefe {
 
-    public int vel, vida, chefeX, chefeY, tamX, tamY;
-    public int tiroX, tiroY, tamTiroX, tamTiroY;
+    private int vel, vida, chefeX, chefeY, tamX, tamY;
+    private int tiroX, tiroY, tamTiroX, tamTiroY;
 
-    public int areaColisãoCorpo;
-    public int areaColisaoAsaDireita;
-    public int areaColisaoAsaEsquerda;
-    public int areaColisaoAsasCorpo;
-    public int indiceEspecial = 0;
-    public int especialCrescer = 0;
+    private int areaColisaoCorpo;
+    private int areaColisaoAsaDireita;
+    private int areaColisaoAsaEsquerda;
+    private int areaColisaoAsasCorpo;
+    private int indiceEspecial = 0;
+    private int especialCrescer = 0;
 
-    public int vidaaAsaDireita;
-    public int vidaAsaEsquerda;
+    private int vidaaAsaDireita;
+    private int vidaAsaEsquerda;
 
     // Imagens
-    public Image corpoNormal;
-    public Image corpoDanificado;
-    public Image especialMeio = new ImageIcon(getClass().getResource("/chefes/chefe1/Especial/energiaMeio.png")).getImage();
-    public Image especialFim= new ImageIcon(getClass().getResource("/chefes/chefe1/Especial/energiaFim.png")).getImage();
+    private Image corpoNormal;
+    private Image corpoDanificado;
+    private Image especialMeio = new ImageIcon(getClass().getResource("/chefes/chefe1/Especial/energiaMeio.png")).getImage();
+    private Image especialFim= new ImageIcon(getClass().getResource("/chefes/chefe1/Especial/energiaFim.png")).getImage();
 
-    public Image asaDireitaNormal;
-    public Image asaDireitaDanificada;
+    private Image asaDireitaNormal;
+    private Image asaDireitaDanificada;
 
-    public Image asaEsquerdaNormal;
-    public Image asaEsquerdaDanificada;
+    private Image asaEsquerdaNormal;
+    private Image asaEsquerdaDanificada;
 
-    public Image imgTiro;
-    public Image imgAreaDeColisão;
+    private Image imgTiro;
+    private Image imgAreaDeColisao;
 
-    public ArrayList<Image> especialSprites = new ArrayList<>(); 
+    private ArrayList<Image> especialSprites = new ArrayList<>();
 
-    public boolean descer = true;
-    public boolean desenhaColisao = false;
-    public boolean especial = false;
-    public boolean especialPodeCausarDano = true;
+    private boolean descer = true;
+    private boolean desenhaColisao = false;
+    private boolean especial = false;
+    private boolean especialPodeCausarDano = true;
 
     public Chefe( String caminhoTiroImg, ArrayList<Image> especialSprites) {
 
@@ -64,20 +64,20 @@ public class Chefe {
         imgTiro = new ImageIcon(getClass().getResource(caminhoTiroImg)).getImage();
 
         // Imagem para mostrar as áreas de colisão
-        imgAreaDeColisão = new ImageIcon(getClass().getResource("/chefes/chefe1/coli.jpg")).getImage();
+        imgAreaDeColisao = new ImageIcon(getClass().getResource("/chefes/chefe1/coli.jpg")).getImage();
 
         tamX = 480;
         tamY = 480;
 
-        vida = 50;
-        vel = 10;
+        vida = 200;
+        vel = 200;
 
         // Vida das asas
-        vidaAsaEsquerda = 5;
+        vidaAsaEsquerda = 100;
         vidaaAsaDireita = 10;
 
         // Áreas de colisão
-        areaColisãoCorpo = 110;
+        areaColisaoCorpo = 110;
         areaColisaoAsaDireita = 50;
         areaColisaoAsaEsquerda = 50;
         areaColisaoAsasCorpo = 50;
@@ -134,35 +134,35 @@ public class Chefe {
         if (desenhaColisao) {
 
             // Corpo
-            g.drawImage( imgAreaDeColisão, chefeX + 45, chefeY + 300,tamX - 390, areaColisãoCorpo, null);
+            g.drawImage( imgAreaDeColisao, chefeX + 45, chefeY + 300,tamX - 390, areaColisaoCorpo, null);
 
 
             // Asa esquerda
 
-            g.drawImage( imgAreaDeColisão, chefeX - 13, chefeY + 100, 55, areaColisaoAsasCorpo,null);
+            g.drawImage( imgAreaDeColisao, chefeX - 13, chefeY + 100, 55, areaColisaoAsasCorpo,null);
 
-            g.drawImage( imgAreaDeColisão, chefeX, chefeY + 200, 15, areaColisaoAsaEsquerda, null);
+            g.drawImage( imgAreaDeColisao, chefeX, chefeY + 200, 15, areaColisaoAsaEsquerda, null);
 
-            g.drawImage(imgAreaDeColisão, chefeX - 27, chefeY + 225, 30, areaColisaoAsaEsquerda, null);
+            g.drawImage(imgAreaDeColisao, chefeX - 27, chefeY + 225, 30, areaColisaoAsaEsquerda, null);
 
-            g.drawImage(imgAreaDeColisão, chefeX - 50, chefeY + 275, 30, areaColisaoAsaEsquerda, null);
+            g.drawImage(imgAreaDeColisao, chefeX - 50, chefeY + 275, 30, areaColisaoAsaEsquerda, null);
 
-            g.drawImage(imgAreaDeColisão, chefeX - 110, chefeY + 325, 65 ,areaColisaoAsaEsquerda, null);
+            g.drawImage(imgAreaDeColisao, chefeX - 110, chefeY + 325, 65 ,areaColisaoAsaEsquerda, null);
 
 
             // Asa direita
 
-            g.drawImage(imgAreaDeColisão, chefeX + 137, chefeY + 100, 55, areaColisaoAsasCorpo, null);
+            g.drawImage(imgAreaDeColisao, chefeX + 137, chefeY + 100, 55, areaColisaoAsasCorpo, null);
 
-            g.drawImage(imgAreaDeColisão, chefeX + 160, chefeY + 200, 15, areaColisaoAsaDireita, null);
+            g.drawImage(imgAreaDeColisao, chefeX + 160, chefeY + 200, 15, areaColisaoAsaDireita, null);
 
-            g.drawImage(imgAreaDeColisão, chefeX + 175, chefeY + 225, 30, areaColisaoAsaDireita, null
+            g.drawImage(imgAreaDeColisao, chefeX + 175, chefeY + 225, 30, areaColisaoAsaDireita, null
             );
 
-            g.drawImage(imgAreaDeColisão, chefeX + 200, chefeY + 275, 30, areaColisaoAsaDireita, null
+            g.drawImage(imgAreaDeColisao, chefeX + 200, chefeY + 275, 30, areaColisaoAsaDireita, null
             );
 
-            g.drawImage(imgAreaDeColisão, chefeX + 225, chefeY + 325, 65, areaColisaoAsaDireita, null );
+            g.drawImage(imgAreaDeColisao, chefeX + 225, chefeY + 325, 65, areaColisaoAsaDireita, null );
         }
     }
 
@@ -173,7 +173,7 @@ public class Chefe {
 
     public Rectangle getBounds() {
 
-        return new Rectangle(chefeX + 45, chefeY + 300, tamX - 390, areaColisãoCorpo);
+        return new Rectangle(chefeX + 45, chefeY + 300, tamX - 390, areaColisaoCorpo);
     }
 
 
@@ -250,7 +250,7 @@ public class Chefe {
     // =========================================================
     // TIRO
     // =========================================================
-    
+
     public void desenharEspecial(Graphics g){
         if(especial){
             if(vidaaAsaDireita > 0){
@@ -261,12 +261,12 @@ public class Chefe {
             }
             if(indiceEspecial == 7){
                 if(vidaaAsaDireita > 0){
-                   
+
                     g.drawImage(especialFim, chefeX + 147 + 64, chefeY + 570 + 64 + especialCrescer, 128 ,128,null);
                     g.drawImage(especialMeio, chefeX + 122 + 64, chefeY + 455 + 64, 160 , 128 + especialCrescer, null);
                 }
                 if(vidaAsaEsquerda > 0){
-                    
+
                     g.drawImage(especialFim, chefeX - 222 + 64, chefeY + 570 + 64 + especialCrescer, 128,128,null);
                     g.drawImage(especialMeio, chefeX - 247 + 64, chefeY + 455 + 64, 160 , 128 + especialCrescer, null);
                 }
@@ -276,25 +276,149 @@ public class Chefe {
     }
 
     public void desenharAreaColisaoEspecial(Graphics g){
-        g.drawImage(imgAreaDeColisão, chefeX + 160 + 64, chefeY + 350 + 64, 128, 384 + especialCrescer, null );
-        g.drawImage(imgAreaDeColisão, chefeX - 210 + 64, chefeY + 350 + 64, 128, 384 + especialCrescer, null );
+        g.drawImage(imgAreaDeColisao, chefeX + 160 + 64, chefeY + 350 + 64, 128, 384 + especialCrescer, null );
+        g.drawImage(imgAreaDeColisao, chefeX - 210 + 64, chefeY + 350 + 64, 128, 384 + especialCrescer, null );
     }
-    
+
     public Rectangle getBoundsEspecialDireia(){
         if(vidaaAsaDireita <= 0 || !especialPodeCausarDano){
-            return new Rectangle(00, 0, 0,0);  
+            return new Rectangle(00, 0, 0,0);
         }else{
-            return new Rectangle(chefeX + 160 + 64, chefeY + 350 + 64, 128, 384 + especialCrescer);     
+            return new Rectangle(chefeX + 160 + 64, chefeY + 350 + 64, 128, 384 + especialCrescer);
         }
-        
+
     }
 
     public Rectangle getBoundsEspecialEsquerda(){
 
         if(vidaAsaEsquerda <= 0 || !especialPodeCausarDano){
-            return new Rectangle(00, 0, 0,0);  
+            return new Rectangle(00, 0, 0,0);
         }else{
             return new Rectangle(chefeX - 210 + 64, chefeY + 350 + 64, 128, 384 + especialCrescer);
         }
+    }
+
+    // =========================================================
+    // ENCAPSULAMENTO
+    // =========================================================
+
+    public int getVel() {
+        return vel;
+    }
+
+    public void setVel(int vel) {
+        this.vel = vel;
+    }
+
+    public int getVida() {
+        return vida;
+    }
+
+    public void setVida(int vida) {
+        this.vida = vida;
+    }
+
+    public int getVidaAsaEsquerda() {
+        return vidaAsaEsquerda;
+    }
+
+    public void setVidaAsaEsquerda(int vidaAsaEsquerda) {
+        this.vidaAsaEsquerda = vidaAsaEsquerda;
+    }
+
+    public int getVidaaAsaDireita() {
+        return vidaaAsaDireita;
+    }
+
+    public void setVidaaAsaDireita(int vidaaAsaDireita) {
+        this.vidaaAsaDireita = vidaaAsaDireita;
+    }
+
+    public int getChefeX() {
+        return chefeX;
+    }
+
+    public void setChefeX(int chefeX) {
+        this.chefeX = chefeX;
+    }
+
+    public int getChefeY() {
+        return chefeY;
+    }
+
+    public int getTamX() {
+        return tamX;
+    }
+
+    public int getTamY() {
+        return tamY;
+    }
+
+    public int getAreaColisãoCorpo() {
+        return areaColisaoCorpo;
+    }
+
+    public void setAreaColisãoCorpo(int areaColisaoCorpo) {
+        this.areaColisaoCorpo = areaColisaoCorpo;
+    }
+
+    public int getAreaColisaoAsaDireita() {
+        return areaColisaoAsaDireita;
+    }
+
+    public void setAreaColisaoAsaDireita(int areaColisaoAsaDireita) {
+        this.areaColisaoAsaDireita = areaColisaoAsaDireita;
+    }
+
+    public int getAreaColisaoAsaEsquerda() {
+        return areaColisaoAsaEsquerda;
+    }
+
+    public void setAreaColisaoAsaEsquerda(int areaColisaoAsaEsquerda) {
+        this.areaColisaoAsaEsquerda = areaColisaoAsaEsquerda;
+    }
+
+    public int getAreaColisaoAsasCorpo() {
+        return areaColisaoAsasCorpo;
+    }
+
+    public void setAreaColisaoAsasCorpo(int areaColisaoAsasCorpo) {
+        this.areaColisaoAsasCorpo = areaColisaoAsasCorpo;
+    }
+
+    public int getIndiceEspecial() {
+        return indiceEspecial;
+    }
+
+    public void setIndiceEspecial(int indiceEspecial) {
+        this.indiceEspecial = indiceEspecial;
+    }
+
+    public int getEspecialCrescer() {
+        return especialCrescer;
+    }
+
+    public void setEspecialCrescer(int especialCrescer) {
+        this.especialCrescer = especialCrescer;
+    }
+
+    public ArrayList<Image> getEspecialSprites() {
+        return especialSprites;
+    }
+
+    public boolean isEspecial() {
+        return especial;
+    }
+
+    public void setEspecial(boolean especial) {
+        this.especial = especial;
+    }
+
+    public boolean isEspecialPodeCausarDano() {
+        return especialPodeCausarDano;
+    }
+
+    public void setEspecialPodeCausarDano(boolean especialPodeCausarDano) {
+        this.especialPodeCausarDano = especialPodeCausarDano;
     }
 }

@@ -17,10 +17,13 @@ import java.awt.image.BufferedImage;
 public class Menu extends JPanel implements KeyListener,ActionListener{
     private JFrame janela;
     private ArrayList<Image> fundo = new ArrayList<>();
-    public Timer timerGeral,timerAdicionarFrame;
+    private Timer timerGeral,timerAdicionarFrame;
     private int indiceFundo = 1,totalFrames = 143;
     private Jogo jogo;
-    
+    private boolean carregarRecursos = true;
+    private Runnable threadRecursos;
+    private Thread threadCarregarRecursos;
+
     public Menu(JFrame janela){
         this.janela = janela;
         setFocusable(true);
@@ -33,35 +36,43 @@ public class Menu extends JPanel implements KeyListener,ActionListener{
             fundo.add(new ImageIcon(getClass().getResource("/menu/fundo/(" + i + ").jpg")).getImage());
         }
 
-        timerAdicionarFrame = new Timer(6, new ActionListener() {
+
+        threadRecursos = new Runnable() {
+
             @Override
-            public void actionPerformed(ActionEvent e) {
-                try{
-                    if(indiceFundo <= totalFrames){
+            public void run() {
+                while(carregarRecursos){
+                    try{
+                        if(indiceFundo <= totalFrames){
+                            if(fundo.size() < 20){
+                                BufferedImage img = ImageIO.read(getClass().getResource("/menu/fundo/(" + indiceFundo + ").jpg"));
+                                synchronized(fundo){
+                                    fundo.add(img);
+                                }
+                                indiceFundo ++;
 
-                        if(fundo.size() < 20){
-                            BufferedImage img = ImageIO.read(getClass().getResource("/menu/fundo/(" + indiceFundo + ").jpg"));
-                            fundo.add(img);
-                            indiceFundo ++;
+                            }else{
+                                Thread.sleep(30);
+                            }
                         }else{
-                            return;
+                            indiceFundo = 1;
                         }
-                    }else{
-                        indiceFundo = 1;      
-                    }      
-                }  
-             catch(Exception Err){
-                System.out.println("ERRO AO CARREGAR FUNDO NO MENU! CÓDIGO DE ERRO: " + Err);
-                Err.printStackTrace();
-            }
-        }
-        });
 
-        timerAdicionarFrame.start();
-        
+                    }catch(Exception err){
+                        System.err.println("Erro na classe Menu ao carregar recursos (fundo " + indiceFundo + "):");
+                        err.printStackTrace();
+                    }
+                }
+            }
+
+        };
+        iniciarCarregamentoRecursos();
+
         timerGeral = new Timer(30,this);
-        timerGeral.start(); 
+        timerGeral.start();
     }
+
+
 
     @Override
     public void paintComponent(Graphics g){
@@ -77,31 +88,17 @@ public class Menu extends JPanel implements KeyListener,ActionListener{
 
     @Override
     public void keyTyped(KeyEvent e) {
-        
-    }
-        
 
-   
+    }
+
+
+
     @Override
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 
-            jogo.resetarJogo();
-
-            // Iniciar os timers da partida
-            jogo.timerAnimacao.start();
-            jogo.timerSpawnInimigo.start();
-            jogo.timerTiro.start();
-            jogo.timerGeral.start();
-
-            // Carrega as imagens em uma thread separada (fora da EDT)
-            jogo.iniciarCarregamentoRecursos();
-
-            jogo.timerTiroChefe.start();
-            jogo.timerAtivarEspecialChefe.start();
-
-            // Iniciar música
-            jogo.somFundo.tocarLoop();
+            // Delega para o jogo: timers, recursos e música
+            jogo.iniciarPartida();
 
             // Trocar para o jogo
             janela.setContentPane(jogo);
@@ -118,22 +115,36 @@ public class Menu extends JPanel implements KeyListener,ActionListener{
         if(e.getKeyCode() == KeyEvent.VK_ESCAPE){
             System.exit(0);
         }
-        
+
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-    
+
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-       
 
-        
+
+
         repaint();
 
-        
+
+    }
+
+    public void iniciarCarregamentoRecursos() {
+        carregarRecursos = true;
+        threadCarregarRecursos = new Thread(threadRecursos);
+        threadCarregarRecursos.start();
+    }
+
+    // =========================================================
+    // ENCAPSULAMENTO
+    // =========================================================
+
+    public void iniciarTimer() {
+        timerGeral.start();
     }
 
     
