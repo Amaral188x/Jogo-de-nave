@@ -28,9 +28,13 @@ public class Som {
 
     public void tocarSom(){
         try {
-            AudioInputStream audioStream = AudioSystem.getAudioInputStream(getClass().getResource(caminho)); //prepara o audio com dados 
-            clip = AudioSystem.getClip();//cria uma obeto Clip e armazena o som inteiro na memória para poder usar dps
-            clip = AudioSystem.getClip();
+            java.net.URL url = getClass().getResource(caminho);
+            if(url == null){
+                System.err.println("Som nao encontrado: " + caminho);
+                return;
+            }
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(url); //prepara o audio com dados
+            clip = AudioSystem.getClip();//cria um objeto Clip e armazena o som inteiro na memória para poder usar dps
 
             clip.open(audioStream);
             setVolume(volume); // aplica o volume ao novo Clip
@@ -43,7 +47,12 @@ public class Som {
 
     public void tocarLoop(){
         try{
-        AudioInputStream audioStream = AudioSystem.getAudioInputStream(getClass().getResource(caminho));
+        java.net.URL url = getClass().getResource(caminho);
+        if(url == null){
+            System.err.println("Som nao encontrado: " + caminho);
+            return;
+        }
+        AudioInputStream audioStream = AudioSystem.getAudioInputStream(url);
         clip = AudioSystem.getClip();
         clip.open(audioStream);
         clip.loop(clip.LOOP_CONTINUOUSLY) ;

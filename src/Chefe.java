@@ -34,7 +34,7 @@ public class Chefe {
 
     private ArrayList<Image> especialSprites = new ArrayList<>();
 
-    private boolean descer = true;
+    public boolean podecrescerEspecial = false;
     private boolean desenhaColisao = false;
     private boolean especial = false;
     private boolean especialPodeCausarDano = true;
@@ -73,8 +73,8 @@ public class Chefe {
         vel = 200;
 
         // Vida das asas
-        vidaAsaEsquerda = 100;
-        vidaaAsaDireita = 10;
+        vidaAsaEsquerda = 25;
+        vidaaAsaDireita = 25;
 
         // Áreas de colisão
         areaColisaoCorpo = 110;
@@ -260,6 +260,7 @@ public class Chefe {
                 g.drawImage(especialSprites.get(indiceEspecial), chefeX - 210 + 64, chefeY + 350 + 64, 128, 128, null);
             }
             if(indiceEspecial == 7){
+                
                 if(vidaaAsaDireita > 0){
 
                     g.drawImage(especialFim, chefeX + 147 + 64, chefeY + 570 + 64 + especialCrescer, 128 ,128,null);
@@ -276,8 +277,8 @@ public class Chefe {
     }
 
     public void desenharAreaColisaoEspecial(Graphics g){
-        g.drawImage(imgAreaDeColisao, chefeX + 160 + 64, chefeY + 350 + 64, 128, 384 + especialCrescer, null );
-        g.drawImage(imgAreaDeColisao, chefeX - 210 + 64, chefeY + 350 + 64, 128, 384 + especialCrescer, null );
+        g.drawImage(imgAreaDeColisao, chefeX + 122 + 64, chefeY + 350 + 64, 128, 128 + especialCrescer, null );
+        g.drawImage(imgAreaDeColisao, chefeX - 247 + 64, chefeY + 350 + 64, 128, 128 + especialCrescer, null );
     }
 
     public Rectangle getBoundsEspecialDireia(){

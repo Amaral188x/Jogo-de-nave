@@ -20,6 +20,28 @@ import javax.swing.Timer;
 
 public class Jogo extends JPanel implements KeyListener, ActionListener, MouseListener, MouseMotionListener {
 
+   
+
+    private static final int PONTOS_PARA_CHEFE = 5;              // pontos que ativam a luta contra o chefe
+    private static final int VIDA_MAXIMA_CHEFE = 200;            // vida total do chefe no reset
+    private static final int VIDA_CHEFE_DANIFICADO = 50;         // abaixo disso o corpo do chefe fica danificado
+    private static final int VIDA_CHEFE_INICIO_EXPLOSAO = 30;    // vida em que começa a explosão final do chefe
+    private static final int VIDA_ASAS_CHEFE = 50;               // vida das asas no reset
+    private static final int VIDA_CRITICA_NAVE = 5;              // abaixo disso a barra de vida muda para 'vida baixa'
+    private static final int LIMITE_BURACOS = 40;                // máximo de marcas de tiro exibidas no chefe
+    private static final int BUFFER_FRAMES = 20;                 // tamanho máximo do buffer de frames carregados
+    private static final int CONSUMIR_BUFFER_FUNDOS = 3;         // remove frame do fundo quando o buffer passa disso
+    private static final int CONSUMIR_BUFFER_VIDA_NAVE = 3;      // remove frame da barra de vida quando passa disso
+    private static final int CONSUMIR_BUFFER_DERROTA = 3;        // remove frame da derrota quando passa disso
+    private static final int REMOVER_BUFFER_DERROTA = 4;         // segunda condição de remoção da derrota
+    private static final int REMOVER_BUFFER_CHEFE_DERROTADO = 4; // remove frame da explosão final do chefe
+    private static final int TOTAL_FRAMES_EXPLOSAO_CHEFE = 176;  // quantidade de frames da explosão do chefe
+    private static final int TOTAL_FRAMES_DERROTA = 57;          // quantidade de frames da animação de derrota
+    private static final int FRAME_SOM_DERROTA = 12;             // frame da derrota em que o som toca
+    private static final int LIMITE_INFERIOR_MAPA = 900;         // limite vertical para mover a nave
+    private static final int LIMITE_DIREITO_MAPA = 1800;         // limite horizontal para mover a nave
+    private static final int ALTURA_MAXIMA_TIRO = 1100;          // y em que o tiro do chefe é removido
+
     // =========================================================
     // objetos principais
     // =========================================================
@@ -88,7 +110,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
     private Som atingido = new Som("/sons/nave/atingido.wav");
     private Som especialChefeSom = new Som("/sons/inimigo/especialChefeSom.wav");
     private Som naveLevouDanoEspecialChefe = new Som("/sons/nave/levouDanoDoChefe.wav");
-    private Som chefeDerrotadoExplosaoSom = new Som("/sons/inimigo/chefeDerrotadoExplosao.wav");
+    private Som chefeDerrotadoExplosaoSom = new Som("/sons/inimigo/ChefeDerrotadoExplosao.wav");
 
     // =========================================================
     // sprites
@@ -284,7 +306,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
 
                             if (indiceFundo <= totalFrames) {
 
-                                if (fundo.size() < 20) {
+                                if (fundo.size() < BUFFER_FRAMES) {
 
                                     BufferedImage img = ImageIO.read(getClass().getResource("/jogo/fundo/(" + indiceFundo + ").jpg"));
 
@@ -306,11 +328,11 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
                             // carregar explosao do chefe
                             // -------------------------------------------------
 
-                            if (chefe.getVida() < 30 && !terminouExplosaoChefe) {
+                            if (chefe.getVida() < VIDA_CHEFE_INICIO_EXPLOSAO && !terminouExplosaoChefe) {
 
-                                if (chefeDerrotadoSprites.size() < 20) {
+                                if (chefeDerrotadoSprites.size() < BUFFER_FRAMES) {
 
-                                    if (indiceExplosaoChefe < 176) {
+                                    if (indiceExplosaoChefe < TOTAL_FRAMES_EXPLOSAO_CHEFE) {
 
                                         BufferedImage img = ImageIO.read(getClass().getResource("/chefes/chefe1/explosao/(" + indiceExplosaoChefe + ").png"));
 
@@ -340,9 +362,9 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
 
                             if (nave.getVida() <= 0 && indiceExplosaoNave >= explosaoNave.size() - 1) {
 
-                                if (framesDerrota.size() < 20) {
+                                if (framesDerrota.size() < BUFFER_FRAMES) {
 
-                                    if (indiceAnimacaoDerrota < 57) {
+                                    if (indiceAnimacaoDerrota < TOTAL_FRAMES_DERROTA) {
 
                                         BufferedImage img = ImageIO.read(getClass().getResource("/jogo/derrota/(" + indiceAnimacaoDerrota + ").png" ));
 
@@ -352,7 +374,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
 
                                         indiceAnimacaoDerrota++;
 
-                                        if (indiceAnimacaoDerrota == 12) {
+                                        if (indiceAnimacaoDerrota == FRAME_SOM_DERROTA) {
                                             
                                             perdeu.tocarSom();
                                         }
@@ -385,7 +407,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
 
                             if (numeroFrameAtualVidaNave < totalFramesVida) {
 
-                                if (vidaNaveFrames.size() < 20 && nave.getVida() > nave.getVidaMaxima() / 2) {
+                                if (vidaNaveFrames.size() < BUFFER_FRAMES && nave.getVida() > nave.getVidaMaxima() / 2) {
 
                                     BufferedImage img = ImageIO.read(getClass().getResource("/nave/vida_normal/(" + numeroFrameAtualVidaNave + ").png"));
 
@@ -396,9 +418,9 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
                                     numeroFrameAtualVidaNave++;
 
                                 } else if (
-                                    vidaNaveFrames.size() < 20 &&
+                                    vidaNaveFrames.size() < BUFFER_FRAMES &&
                                     nave.getVida() <= nave.getVidaMaxima() / 2 &&
-                                    nave.getVida() > 5) {
+                                    nave.getVida() > VIDA_CRITICA_NAVE) {
 
                                     nave.setNaveImg(carregarSprite("/nave/nave_Danificada.png"));
 
@@ -413,8 +435,8 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
                                     numeroFrameAtualVidaNave++;
 
                                 } else if (
-                                    vidaNaveFrames.size() < 20 &&
-                                    nave.getVida() <= 5) {
+                                    vidaNaveFrames.size() < BUFFER_FRAMES &&
+                                    nave.getVida() <= VIDA_CRITICA_NAVE) {
 
                                     BufferedImage img = ImageIO.read(getClass().getResource("/nave/vida_baixa/(" + numeroFrameAtualVidaNave + ").png" ));
 
@@ -436,8 +458,8 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
 
                         } catch (Exception erro) {
 
-                            System.err.println("Erro na classe Jogo ao carregar recursos (thread de streaming): " + erro);
-                            erro.printStackTrace();
+                            System.err.println(".");
+                            
                         }
                     }
                 }
@@ -519,7 +541,9 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if(chefe.isEspecial()){
-                        chefe.setEspecialCrescer(chefe.getEspecialCrescer() + 40);
+                        if(chefe.getIndiceEspecial() == 7){
+                            chefe.setEspecialCrescer(chefe.getEspecialCrescer() + 40);
+                        }
                         if(chefe.getIndiceEspecial() < chefe.getEspecialSprites().size() - 1){
                             if(chefe.getIndiceEspecial() == 7 && chefe.getEspecialCrescer() < 1800){
                                 if(especialChefeSom.terminou()){
@@ -586,7 +610,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
 
             g.drawImage(fundo.get(1),0,0,null);
 
-            if (fundo.size() >= 3) {
+            if (fundo.size() >= CONSUMIR_BUFFER_FUNDOS) {
                 fundo.remove(0);
             }
         }
@@ -600,7 +624,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
 
             g.drawImage(vidaNaveFrames.get(1),20,20,null);
 
-            if (vidaNaveFrames.size() >= 3) {
+            if (vidaNaveFrames.size() >= CONSUMIR_BUFFER_VIDA_NAVE) {
                 vidaNaveFrames.remove(0);
             }
         }
@@ -651,7 +675,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
         // CHEFE
         // =====================================================
 
-        if (pontos >= 5 && chefe.getVida() > 0) {
+        if (pontos >= PONTOS_PARA_CHEFE && chefe.getVida() > 0) {
 
             // =====================================================
             // TIROS CHEFE
@@ -703,7 +727,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
 
 
             // Corpo danificado
-            if (chefe.getVida() < 50) {
+            if (chefe.getVida() < VIDA_CHEFE_DANIFICADO) {
 
                 g.drawImage(curtoCircuito2.get(indiceCurto3),chefe.getChefeX() - 10,chefe.getChefeY() + 300,null);
 
@@ -728,7 +752,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
 
 
             // Explosão do corpo
-            if (chefe.getVida() < 50 && podeExplodirCorpoChefe) {
+            if (chefe.getVida() < VIDA_CHEFE_DANIFICADO && podeExplodirCorpoChefe) {
 
                 g.drawImage( spritesExplosaoChefe.get(indiceSpritesExplosao), chefe.getChefeX() - 200, chefe.getChefeY(), null);
             }
@@ -744,7 +768,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
         if(chefe.getVida() <= 0 && !terminouExplosaoChefe && !chefeDerrotadoSprites.isEmpty()){
             chefe.setVel(0);
             g.drawImage(chefeDerrotadoSprites.get(2), chefe.getChefeX(), chefe.getChefeY(), null);
-            if(chefeDerrotadoSprites.size() >= 4){
+            if(chefeDerrotadoSprites.size() >= REMOVER_BUFFER_CHEFE_DERROTADO){
                 chefeDerrotadoSprites.remove(0);
             }
         }
@@ -784,8 +808,12 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
         g.setColor(java.awt.Color.RED);
 
         g.drawString("LIFE: ", 10, 30);
+        if(chefe.getVida() > 0 && pontos >= PONTOS_PARA_CHEFE){
 
-        g.drawString("BOSS " + chefe.getVida(),10,370);
+            g.drawString("BOSS: " + chefe.getVida(),10,370);
+            g.drawString("ASA ESQUERDA: " + chefe.getVidaAsaEsquerda(),10,400);
+            g.drawString("ASA DIREITA: " + chefe.getVidaaAsaDireita(),10,430);
+        }
 
         g.setColor(java.awt.Color.GREEN);
 
@@ -796,11 +824,11 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
         // TELA DE DERROTA
         // =====================================================
 
-        if (!framesDerrota.isEmpty() && framesDerrota.size() >= 3 && nave.getVida() <= 0) {
+        if (!framesDerrota.isEmpty() && framesDerrota.size() >= CONSUMIR_BUFFER_DERROTA && nave.getVida() <= 0) {
 
             g.drawImage( framesDerrota.get(1), 0, 0, getWidth(), getHeight(), null);
 
-            if (framesDerrota.size() >= 4) {
+            if (framesDerrota.size() >= REMOVER_BUFFER_DERROTA) {
                 framesDerrota.remove(0);
             }
         }
@@ -828,6 +856,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
 
             menu.iniciarTimer();
             menu.requestFocusInWindow();
+            
 
             janela.revalidate();
             janela.repaint();
@@ -953,7 +982,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
         // EXPLOSÃO DO CORPO
         // =====================================================
 
-        if (podeExplodirCorpoChefe && chefe.getVida() < 50) {
+        if (podeExplodirCorpoChefe && chefe.getVida() < VIDA_CHEFE_DANIFICADO) {
 
             if (podeTocarSomExplosaoCorpo) {
 
@@ -976,7 +1005,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
         // CURTO-CIRCUITO ASA ESQUERDA / CORPO
         // =====================================================
 
-        if (chefe.getVidaAsaEsquerda() <= 0 || chefe.getVida() < 50) {
+        if (chefe.getVidaAsaEsquerda() <= 0 || chefe.getVida() < VIDA_CHEFE_DANIFICADO) {
 
             if (indiceCurto < curtoCircuito.size() - 1) {
                 indiceCurto++;
@@ -999,7 +1028,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
         // CURTO-CIRCUITO ASA DIREITA / CORPO
         // =====================================================
 
-        if (chefe.getVidaaAsaDireita() <= 0 || chefe.getVida() < 50) {
+        if (chefe.getVidaaAsaDireita() <= 0 || chefe.getVida() < VIDA_CHEFE_DANIFICADO) {
 
             if (indiceCurto4 < acertoSprites.size() - 1) {
                 indiceCurto4++;
@@ -1123,7 +1152,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
         // CHEFE
         // =====================================================
 
-        if (pontos >= 5 && chefe.getVida() > 0) {
+        if (pontos >= PONTOS_PARA_CHEFE && chefe.getVida() > 0) {
 
         // =====================================================
         // Movimentação
@@ -1136,14 +1165,14 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
                 chefe.setChefeX(chefe.getChefeX() + chefe.getVel());
             }
 
-            if(pontos == 5){
+            if(pontos == PONTOS_PARA_CHEFE){
                 //Inicializar esses efeitos especiais
                 naveLevouDanoEspecialChefe.setVolume(2.0f);
                 naveLevouDanoEspecialChefe.tocarSom();
                 especialChefeSom.tocarSom();
             }
 
-            if(chefe.getVidaAsaEsquerda() <= 0 && chefe.getVidaaAsaDireita() <= 0 || chefe.getVida() <= 0){
+            if((chefe.getVidaAsaEsquerda() <= 0 && chefe.getVidaaAsaDireita() <= 0) || chefe.getVida() <= 0){
                 timerAtivarEspecialChefe.stop();
             }
 
@@ -1171,7 +1200,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
             for(Tiro tiro : tiroschefe){
                 tiro.atualizar();
                 tiro.setY(tiro.getY() + 20);
-                if(tiro.getY() > 1100){
+                if(tiro.getY() > ALTURA_MAXIMA_TIRO){
                     tirosParaRemover.add(tiro);
                 }
 
@@ -1187,7 +1216,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
                 }
             }
 
-            if (pontos == 5) {
+            if (pontos == PONTOS_PARA_CHEFE) {
 
                 somFundo.parar();
 
@@ -1235,7 +1264,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
                 // ASA / CORPO
                 // ---------------------------------------------
 
-                if (tiro.getBounds().intersects(chefe.getBoundsAsaDireitaCorpo()) || tiro.getBounds().intersects(chefe.getBoundsAsaEsquerdaCorpo()) && tiro.isPodeCausarDano()) {
+                if (tiro.getBounds().intersects(chefe.getBoundsAsaDireitaCorpo()) || (tiro.getBounds().intersects(chefe.getBoundsAsaEsquerdaCorpo()) && tiro.isPodeCausarDano())) {
 
                     if (chefe.getAreaColisaoAsasCorpo() <= 6) {
                         chefe.setAreaColisaoAsasCorpo(50);
@@ -1263,7 +1292,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
                 // ASA DIREITA
                 // ---------------------------------------------
 
-                if (tiro.getBounds().intersects(chefe.getBoundsAsaDireira2()) || tiro.getBounds().intersects( chefe.getBoundsAsaDireita3() ) || tiro.getBounds().intersects( chefe.getBoundsAsaDireita4()) || tiro.getBounds().intersects(chefe.getBoundsAsaDireita5()) && tiro.isPodeCausarDano()
+                if (tiro.getBounds().intersects(chefe.getBoundsAsaDireira2()) || tiro.getBounds().intersects( chefe.getBoundsAsaDireita3() ) || tiro.getBounds().intersects( chefe.getBoundsAsaDireita4()) || (tiro.getBounds().intersects(chefe.getBoundsAsaDireita5()) && tiro.isPodeCausarDano())
                 ) {
 
                     chefe.setAreaColisaoAsaDireita(chefe.getAreaColisaoAsaDireita() - 5);
@@ -1294,7 +1323,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
                 // ---------------------------------------------
 
                 if (
-                    tiro.getBounds().intersects( chefe.getBoundsAsaEsquerda2()) || tiro.getBounds().intersects(chefe.getBoundsAsaEsquerda3()) || tiro.getBounds().intersects(chefe.getBoundsAsaEsquerda4()) ||tiro.getBounds().intersects(chefe.getBoundsAsaEsquerda5()) && tiro.isPodeCausarDano()) {
+                    tiro.getBounds().intersects( chefe.getBoundsAsaEsquerda2()) || tiro.getBounds().intersects(chefe.getBoundsAsaEsquerda3()) || tiro.getBounds().intersects(chefe.getBoundsAsaEsquerda4()) || (tiro.getBounds().intersects(chefe.getBoundsAsaEsquerda5()) && tiro.isPodeCausarDano())) {
 
                     chefe.setAreaColisaoAsaEsquerda(chefe.getAreaColisaoAsaEsquerda() - 5);
 
@@ -1327,7 +1356,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
             podeTocarSomExplosaoChefe = false;
         }
 
-        if(chefe.getVida() <= 0 || pontos < 5){
+        if(chefe.getVida() <= 0 || pontos < PONTOS_PARA_CHEFE){
             timerAtivarEspecialChefe.stop();
             timerTiroChefe.stop();
             if(terminouExplosaoChefe){
@@ -1339,7 +1368,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
         // LIMPAR BURACOS
         // =====================================================
 
-        if (buracosDBala.size() >= 40) {
+        if (buracosDBala.size() >= LIMITE_BURACOS) {
             buracosDBala.remove(0);
         }
 
@@ -1374,7 +1403,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
             nave.setY(nave.getY() - nave.getVel());
         }
 
-        if (baixo && nave.getY() < 900) {
+        if (baixo && nave.getY() < LIMITE_INFERIOR_MAPA) {
             nave.setY(nave.getY() + nave.getVel());
         }
 
@@ -1382,7 +1411,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
             nave.setX(nave.getX() - nave.getVel());
         }
 
-        if (direita && nave.getX() < 1800) {
+        if (direita && nave.getX() < LIMITE_DIREITO_MAPA) {
             nave.setX(nave.getX() + nave.getVel());
         }
 
@@ -1442,9 +1471,9 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
         // RESETAR CHEFE
         // =====================================================
 
-        chefe.setVida(200);
-        chefe.setVidaAsaEsquerda(50);
-        chefe.setVidaaAsaDireita(50);
+        chefe.setVida(VIDA_MAXIMA_CHEFE);
+        chefe.setVidaAsaEsquerda(VIDA_ASAS_CHEFE);
+        chefe.setVidaaAsaDireita(VIDA_ASAS_CHEFE);
         chefe.setVel(10);
 
         chefe.setEspecial(false);
@@ -1536,6 +1565,8 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
         somFundo = new Som("sons/fundo/fundo.wav");
 
         somFundo.setVolume(2.0f);
+
+        menu.iniciarCarregamentoRecursos();
     }
 
 

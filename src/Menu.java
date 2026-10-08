@@ -17,7 +17,7 @@ import java.awt.image.BufferedImage;
 public class Menu extends JPanel implements KeyListener,ActionListener{
     private JFrame janela;
     private ArrayList<Image> fundo = new ArrayList<>();
-    private Timer timerGeral,timerAdicionarFrame;
+    private Timer timerGeral;
     private int indiceFundo = 1,totalFrames = 143;
     private Jogo jogo;
     private boolean carregarRecursos = true;
@@ -62,6 +62,7 @@ public class Menu extends JPanel implements KeyListener,ActionListener{
                         System.err.println("Erro na classe Menu ao carregar recursos (fundo " + indiceFundo + "):");
                         err.printStackTrace();
                     }
+
                 }
             }
 
@@ -110,6 +111,8 @@ public class Menu extends JPanel implements KeyListener,ActionListener{
 
             // Parar o timer do menu
             timerGeral.stop();
+            carregarRecursos = false;
+
         }
 
         if(e.getKeyCode() == KeyEvent.VK_ESCAPE){
@@ -126,11 +129,7 @@ public class Menu extends JPanel implements KeyListener,ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
 
-
-
         repaint();
-
-
     }
 
     public void iniciarCarregamentoRecursos() {
@@ -139,11 +138,10 @@ public class Menu extends JPanel implements KeyListener,ActionListener{
         threadCarregarRecursos.start();
     }
 
-    // =========================================================
-    // ENCAPSULAMENTO
-    // =========================================================
+    
 
     public void iniciarTimer() {
+        iniciarCarregamentoRecursos(); // religa a thread de fundo do menu
         timerGeral.start();
     }
 
