@@ -1,8 +1,8 @@
-# 🚀 Jogo da Nave
+#  Jogo da Nave
 
 Um shoot'em up 2D completo desenvolvido em **Java** (Swing), com fase de inimigos, chefe com partes destrutíveis e sistema de streaming de recursos em tempo real.
 
-## 🎮 Sobre o projeto
+##  Sobre o projeto
 
 O jogador controla uma nave, enfrenta ondas de inimigos e, ao atingir a pontuação necessária, luta contra um chefe com **corpo e asas com vida independentes** — cada parte reage visualmente ao dano recebido.
 
@@ -18,14 +18,14 @@ O jogador controla uma nave, enfrenta ondas de inimigos e, ao atingir a pontuaç
 * Efeitos sonoros e música por estado do jogo (fase normal / chefe)
 * Ferramenta de debug visual: grid de coordenadas sobre a tela e sobre o chefe
 
-## 🛠️ Tecnologias
+##  Tecnologias
 
 * Java (JDK)
 * Java Swing (JFrame, JPanel, Timer, Graphics2D)
 * Java Sound API (`javax.sound.sampled`)
 * Git e GitHub
 
-## 🎯 Habilidades demonstradas
+##  Habilidades demonstradas
 
 Cada item abaixo está implementado no código :
 
@@ -41,32 +41,16 @@ Cada item abaixo está implementado no código :
 * **Organização e documentação de código** — seções comentadas por responsabilidade, padrão consistente de nomenclatura e README funcional
 
 
-##  Como executar
+## Como executar
+Opção 1 automático:
+    apenas baixe o arquivo pelo link abaixo, extraia os arquivos e execute o verificar.bat.
+    https://drive.google.com/file/d/1_B8QaE9oXpq1cU8nOkgQH9hjs5XDVqS5/view?usp=drive_link
 
-1. Instale o **Java JDK**.
-2. Clone este repositório:
+    Se as dependências (jdk) não estiverem instaladas, ele irá baixar e instalar automaticamente, se escolheres a opção automática.
+Opção 2 manualmente:
+    Se por algum motivo quiseres baixar as dependências manualmente, instale o jdk manualmente.
 
-```bash
-git clone https://github.com/Amaral188x/Jogo-de-nave.git
-```
-
-3. Entre na pasta do projeto:
-
-```bash
-cd Jogo-de-nave
-```
-
-4. Compile os arquivos:
-
-```bash
-javac -encoding UTF-8 -d bin src/*.java
-```
-
-5. Execute o jogo:
-
-```bash
-java -cp bin Main
-```
+Se quiseres executar o jogo em alguma IDE (como o vs code), precisa do jdk instalado para executar.
 
 > Recomendado rodar em tela cheia 1920×1080 (o jogo abre nessa resolução).
 

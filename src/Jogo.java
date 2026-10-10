@@ -254,7 +254,6 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
             addMouseListener(this);
             addMouseMotionListener(this);
 
-    
             perdeu.setVolume(2.0f);
 
             // =====================================================
@@ -280,12 +279,9 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
                 fundo.add(new ImageIcon(getClass().getResource("/jogo/fundo/(" + i + ").jpg")).getImage());
             }
 
-            
-
             for (int i = 1; i <= 10; i++) {
                 vidaNaveFrames.add(new ImageIcon(getClass().getResource("/nave/vida_normal/(" + i + ").png")).getImage());
             }
-
 
             // =====================================================
             // Thread para carregar os frames de fundo e etc
@@ -798,7 +794,6 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
             g.drawImage( fumacaNaveSprites.get(indiceFumacaNave), nave.getX() + 10, nave.getY() + 35, null );
         }
 
-
         // =====================================================
         // TEXTOS
         // =====================================================
@@ -819,7 +814,6 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
 
         g.drawString("SCORE: " + pontos, 10, 150);
 
-
         // =====================================================
         // TELA DE DERROTA
         // =====================================================
@@ -835,7 +829,6 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
 
     }
 
-
     // =========================================================
     // TECLADO
     // =========================================================
@@ -843,7 +836,6 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
     @Override
     public void keyTyped(KeyEvent e) {
     }
-
 
     @Override
     public void keyPressed(KeyEvent e) {
@@ -953,7 +945,6 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
             }
         }
 
-
         // =====================================================
         // EXPLOSÃO DA ASA DIREITA
         // =====================================================
@@ -977,7 +968,6 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
             }
         }
 
-
         // =====================================================
         // EXPLOSÃO DO CORPO
         // =====================================================
@@ -1000,7 +990,6 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
             }
         }
 
-
         // =====================================================
         // CURTO-CIRCUITO ASA ESQUERDA / CORPO
         // =====================================================
@@ -1022,7 +1011,6 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
                 indiceCurto2 = 0;
             }
         }
-
 
         // =====================================================
         // CURTO-CIRCUITO ASA DIREITA / CORPO
@@ -1068,7 +1056,6 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
             somFundo.parar();
         }
 
-
         // =====================================================
         // EXPLOSÃO DA NAVE
         // =====================================================
@@ -1103,7 +1090,6 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
             }
         }
 
-
         // =====================================================
         // INIMIGOS
         // =====================================================
@@ -1121,12 +1107,10 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
                 nave.setVida(nave.getVida() - 2);
             }
 
-
             if (inimigo.isPodeExcluir()) {
                 inimigosParaRemover.add(inimigo);
                 pontos++;
             }
-
 
             for (Tiro tiro : tirosNave) {
 
@@ -1146,7 +1130,6 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
                 }
             }
         }
-
 
         // =====================================================
         // CHEFE
@@ -1227,11 +1210,9 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
                 pontos++;
             }
 
-
             for (Tiro tiro : tirosNave) {
 
                 timerSpawnInimigo.stop();
-
 
                 // ---------------------------------------------
                 // CORPO
@@ -1259,7 +1240,6 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
                     }
                 }
 
-
                 // ---------------------------------------------
                 // ASA / CORPO
                 // ---------------------------------------------
@@ -1286,7 +1266,6 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
                         tirosParaRemover.add(tiro);
                     }
                 }
-
 
                 // ---------------------------------------------
                 // ASA DIREITA
@@ -1316,7 +1295,6 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
                         tirosParaRemover.add(tiro);
                     }
                 }
-
 
                 // ---------------------------------------------
                 // ASA ESQUERDA
@@ -1348,8 +1326,6 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
             }
         }
 
-
-
         if(chefe.getVida() <= 0 && podeTocarSomExplosaoChefe){
             chefeDerrotadoExplosaoSom.setVolume(2.0f);
             chefeDerrotadoExplosaoSom.tocarSom();
@@ -1362,7 +1338,6 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
             if(terminouExplosaoChefe){
                 timerSpawnInimigo.start();
             }
-
         }
         // =====================================================
         // LIMPAR BURACOS
@@ -1394,7 +1369,6 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
         tirosNave.removeAll(tirosParaRemover);
         tirosParaRemover.clear();
 
-
         // =====================================================
         // MOVIMENTO DA NAVE
         // =====================================================
@@ -1414,11 +1388,8 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
         if (direita && nave.getX() < LIMITE_DIREITO_MAPA) {
             nave.setX(nave.getX() + nave.getVel());
         }
-
-
         repaint();
     }
-
 
     // =========================================================
     // MÉTODOS AUXILIARES
@@ -1502,7 +1473,6 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
 
         buracosDBala.clear();
 
-
         // =====================================================
         // RESETAR EXPLOSÕES DO CHEFE
         // =====================================================
@@ -1528,15 +1498,12 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
         indiceCurto3 = 0;
         indiceCurto4 = 0;
 
-
         // =====================================================
         // RESETAR ANIMAÇÕES
         // =====================================================
 
         indiceAnimacaoTiro = 0;
         indiceTurbina = 0;
-
-
 
         numeroFrameAtualVidaNave = 1;
         // =====================================================
@@ -1554,9 +1521,7 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
         // RESETAR FUNDO
         // =====================================================
 
-
         indiceFundo = 1;
-
 
         // =====================================================
         // RESETAR MÚSICA
@@ -1569,13 +1534,9 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
         menu.iniciarCarregamentoRecursos();
     }
 
-
-
-
     public Image carregarSprite(String caminho) {
         return new ImageIcon(getClass().getResource(caminho)).getImage();
     }
-
 
     // =========================================================
     // MOUSE
@@ -1590,7 +1551,6 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
         }
     }
 
-
     @Override
     public void mouseMoved(MouseEvent e) {
 
@@ -1600,11 +1560,9 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
         }
     }
 
-
     @Override
     public void mouseClicked(MouseEvent e) {
     }
-
 
     @Override
     public void mousePressed(MouseEvent e) {
@@ -1614,7 +1572,6 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
         }
     }
 
-
     @Override
     public void mouseReleased(MouseEvent e) {
 
@@ -1623,14 +1580,11 @@ public class Jogo extends JPanel implements KeyListener, ActionListener, MouseLi
         }
     }
 
-
     @Override
     public void mouseEntered(MouseEvent e) {
     }
-
 
     @Override
     public void mouseExited(MouseEvent e) {
     }
 }
-
